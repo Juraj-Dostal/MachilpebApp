@@ -34,7 +34,11 @@ namespace MachilpebLibrary
                 throw new Exception("Bus stop not found");
             }
 
-            return new Segment(from, to, distance);
+            var segment = new Segment(from, to, distance);
+
+            from.AddSegment(segment);
+
+            return segment;
         }
 
     }
