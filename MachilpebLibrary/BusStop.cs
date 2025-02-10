@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,11 +55,11 @@ namespace MachilpebLibrary
 
         public static BusStop ReadBusStop(string line)
         {
-            string[] parts = line.Split(';');
-            int id = int.Parse(parts[0]);
-            string name = parts[1];
-            double latitude = double.Parse(parts[2]);
-            double longitude = double.Parse(parts[3]);
+            string[] values = line.Split(';');
+            int id = int.Parse(values[0]);
+            string name = values[1];
+            double latitude = double.Parse(values[2], CultureInfo.InvariantCulture);
+            double longitude = double.Parse(values[3], CultureInfo.InvariantCulture);
             return new BusStop(id, name, latitude, longitude);
         }
 

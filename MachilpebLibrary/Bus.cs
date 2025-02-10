@@ -11,15 +11,16 @@ namespace MachilpebLibrary
                 
         public int Id { get; private set; }
         public DayOfWeek Day { get; private set; }
-        public List<String> Shift { get; private set; }
+        public List<string> Shift { get; private set; }
         public List<LineSchedule> schedules { get;  private set; }
 
         public Bus(int id, string shift, DayOfWeek day)
         {
             this.Id = id;
-            this.Shift = new List<string>;
+            this.Shift = new List<string>();
             this.Shift.Add(shift);
             this.Day = day;
+            this.schedules = new List<LineSchedule>();
         }
 
         public void AddLineSchedule(LineSchedule lineSchedule)
@@ -30,6 +31,27 @@ namespace MachilpebLibrary
         public void AddShift(string shift)
         {
             this.Shift.Add(shift);
+        }
+
+        public override string? ToString()
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(Id + ". bus on " + Day.ToString() + " shift: ");
+
+            foreach (var shift in Shift)
+            {
+                sb.Append(shift + " ");
+            }
+
+            sb.Append("\n Schedules:");
+
+            foreach (var schedule in schedules)
+            {
+                sb.Append(schedule.ToString());
+            }
+
+            return sb.ToString(); 
         }
 
         public static Bus ReadBus(string line)

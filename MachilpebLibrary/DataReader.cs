@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MachilpebLibrary
 {
-    internal sealed class DataReader
+    public sealed class DataReader
     {
         private static DataReader _instance;
 
@@ -19,7 +19,15 @@ namespace MachilpebLibrary
 
         private DataReader() 
         {
+            string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\";
+
+            _busList = new List<Bus>();
+            _shiftList = new List<string>();
+            _busStopList = new List<BusStop>();
+            _lineSchedulesList = new List<LineSchedule>();
         
+
+            ReadData(route);
         }
 
         public static DataReader GetInstance()
@@ -31,12 +39,31 @@ namespace MachilpebLibrary
             return _instance;
         }
 
+        public string GetStatus()
+        {
+
+            var sb = new StringBuilder();
+
+            foreach (var bus in _busList)
+            {
+                sb.Append(bus.ToString());
+                sb.Append("\n");
+            }
+
+            return sb.ToString();
+
+        }
+
         private void ReadData(string route)
-        { 
+        {
 
+            ReadShift(route);
+            ReadBusStops(route);
+            ReadSergments(route);
+            ReadBus(route);
+            ReadLineSchedule(route);
+            ReadBusStopSchedule(route);
 
-
-        
         }
 
         // metoda nacita TurnusyZoznam
@@ -44,7 +71,7 @@ namespace MachilpebLibrary
         {
             string path = route + "TurnusyZoznam.csv";
 
-            var lines = File.ReadAllLines(path);
+            var lines = File.ReadAllLines(path).Skip(1);
 
             foreach (var line in lines)
             {
@@ -60,7 +87,7 @@ namespace MachilpebLibrary
 
             var lines = File.ReadAllLines(path);
 
-            Bus bus = null;
+            Bus? bus = null;
 
             foreach (var line in lines)
             {
@@ -99,8 +126,10 @@ namespace MachilpebLibrary
             {
                 var lineSched = LineSchedule.ReadLineSchedule(line);
 
+                _lineSchedulesList.Add(lineSched);
+
                 // najde autobusy, ktore maju rovnaky turnus 
-                var buses = _busList.Where(b => b.Shift.Contains(lineSched.shift)).ToList();
+                var buses = _busList.Where(b => b.Shift.Contains(lineSched.Shift)).ToList();
 
                 foreach (var bus in buses)
                 { 
@@ -113,12 +142,11 @@ namespace MachilpebLibrary
         // metoda nacita zastavky spojov
         private void ReadBusStopSchedule(string route)
         {
-            string path = route + "Zastavky.txt";
+            string path = route + "ZasSpoje.txt";
 
             var lines = File.ReadAllLines(path);
 
             var oldId = -1;
-            LineSchedule? lineSchedule = null;
             BusStopSchedule? oldBss = null;
 
             foreach (var line in lines)
@@ -140,7 +168,7 @@ namespace MachilpebLibrary
 
                 if (oldId != newId)
                 {
-                    lineSchedule = _lineSchedulesList.Find(ls => ls.Id == newId);
+                    var lineSchedule = _lineSchedulesList.Find(ls => ls.Id == newId);
 
                     if (lineSchedule == null)
                     {
@@ -171,7 +199,7 @@ namespace MachilpebLibrary
         {
             string path = route + "Zastavky.csv";
 
-            var lines = File.ReadAllLines(path);
+            var lines = File.ReadAllLines(path).Skip(1);
 
             foreach (var line in lines) 
             { 
@@ -184,7 +212,7 @@ namespace MachilpebLibrary
         {
             string path = route + "Useky.csv";
 
-            var lines = File.ReadAllLines(path);
+            var lines = File.ReadAllLines(path).Skip(1);
 
             foreach (var line in lines)
             { 
