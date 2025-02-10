@@ -19,14 +19,14 @@ namespace MachilpebLibrary
 
         public int Id { get; }
         public int LineId { get; }
-        public string Turnus { get; }
+        public string shift { get; }
         public BusStopSchedule? BusStopSchedules { get; private set; }
 
-        public LineSchedule(int id, int lineId, string turnus)
+        public LineSchedule(int id, int lineId, string shift)
         {
             this.Id = id;
             this.LineId = lineId;
-            this.Turnus = turnus;
+            this.shift = shift;
         }
 
         public void AddBusStopSchedule(BusStopSchedule busStopSchedule)
@@ -39,9 +39,9 @@ namespace MachilpebLibrary
             string[] parts = line.Split(',');
             int id = int.Parse(parts[0].Replace("\"", ""));
             int lineId = int.Parse(parts[1].Replace("\"", ""));
-            string turnus = parts[2].Replace("\"", "").Trim();
+            string shift = parts[2].Replace("\"", "").Trim();
 
-            return new LineSchedule(id, lineId, turnus);
+            return new LineSchedule(id, lineId, shift);
         }
 
     }

@@ -13,8 +13,9 @@ namespace MachilpebLibrary
         private static DataReader _instance;
 
         private List<Bus> _busList;
-        private List<string> _turnusList;
+        private List<string> _shiftList;
         private List<BusStop> _busStopList;
+        private List<LineSchedule> _lineSchedulesList;
 
         private DataReader() 
         {
@@ -30,11 +31,8 @@ namespace MachilpebLibrary
             return _instance;
         }
 
-        private void ReadData(String path)
+        private void ReadData(string route)
         { 
-            string pathTT = path + "TurnusyZoznam.cvr";
-            string pathS = path + "Spoje.txt";
-            string pathSZ = path + "Zastavky.txt";
 
 
 
@@ -42,105 +40,136 @@ namespace MachilpebLibrary
         }
 
         // metoda nacita TurnusyZoznam
-        private void ReadList()
+        private void ReadShift(string route)
         {
-            string path = "TurnusyZoznam.csv";
+            string path = route + "TurnusyZoznam.csv";
 
             var lines = File.ReadAllLines(path);
 
             foreach (var line in lines)
             {
                 var values = line.Split(';');
-                _turnusList.Add(values[1]);
+                _shiftList.Add(values[1]);
             }
         }
 
         // metoda nacita autobusy
-        private void ReadBus()
+        private void ReadBus(string route)
         {
-            // nacitanie dat
-
-            string path = "TurnusyTyzden.cvr";
-            //string pathS =  "Spoje.txt";
-            //string pathSZ =  "Zastavky.txt";
+            string path = route + "TurnusyTyzden.cvr";
 
             var lines = File.ReadAllLines(path);
-            //var linesS = File.ReadAllLines(pathS);
-            //var linesSZ = File.ReadAllLines(pathSZ);
 
             Bus bus = null;
 
-            foreach (var lineTT in lines)
+            foreach (var line in lines)
             {
-                var values = lineTT.Split(';');
+                var values = line.Split(';');
                 var id = int.Parse(values[0]);
-                var turnus = values[1];
-                var day = getDay(values[2]);
-                if (bus == null || bus.Id != id )
+                var shift = values[1];
+
+                // ak turnus pre autobus sa nenachadza v zozname turnusov, tak sa preskoci
+                if (!_shiftList.Contains(shift) )
                 {
-                    bus = new Bus(id, day);
+                    continue;
+                }
+
+                // ak autobus ma viac turnusov , tak sa prida turnus k autobusu
+                if (bus == null || bus.Id != id)
+                {
+                    bus = Bus.ReadBus(line);
+                }
+                else
+                { 
+                    bus.AddShift(shift);
                 }
                 _busList.Add(bus);
 
-
             }
         }
 
-        private void ReadLineSchedule()
+        //metoda nacita spoje
+        private void ReadLineSchedule(string route)
         {
-            string path = "Spoje.txt";
+            string path = route + "Spoje.txt";
 
             var lines = File.ReadAllLines(path);
 
             foreach (var line in lines)
             {
-                LineSchedule.ReadLineSchedule(line);
+                var lineSched = LineSchedule.ReadLineSchedule(line);
+
+                // najde autobusy, ktore maju rovnaky turnus 
+                var buses = _busList.Where(b => b.Shift.Contains(lineSched.shift)).ToList();
+
+                foreach (var bus in buses)
+                { 
+                    bus.AddLineSchedule(lineSched);
+                }
+
             }
         }
 
-        private void ReadBusStopSchedule(LineSchedule lineSchedule)
+        // metoda nacita zastavky spojov
+        private void ReadBusStopSchedule(string route)
         {
-            string path = "Zastavky.txt";
+            string path = route + "Zastavky.txt";
 
             var lines = File.ReadAllLines(path);
 
+            var oldId = -1;
+            LineSchedule? lineSchedule = null;
+            BusStopSchedule? oldBss = null;
+
             foreach (var line in lines)
             {
-                BusStopSchedule.ReadBusStopSchedule(line, _busStopList);
+                var values = line.Split(',');
+                
+                if (values[8].Length == 0 && values[9].Length == 0)
+                {
+                    break;
+                }
+                if (values[9] == "<")
+                {
+                    continue;
+                }
+                
+                var newId = int.Parse(values[1]);
+                
+                var bss = BusStopSchedule.ReadBusStopSchedule(line, _busStopList);
+
+                if (oldId != newId)
+                {
+                    lineSchedule = _lineSchedulesList.Find(ls => ls.Id == newId);
+
+                    if (lineSchedule == null)
+                    {
+                        throw new Exception("Line schedule not found");
+                    }
+
+                    lineSchedule.AddBusStopSchedule(bss);
+
+                    oldId = newId;
+                }
+                else
+                {
+                    if (oldBss == null) 
+                    {
+                        throw new Exception("Bus stop schedule is null");
+                    }
+                    oldBss.SetNext(bss);
+                }
+                
+                oldBss = bss;
+                
             }
-        }
-
-        private DayOfWeek getDay(string date)
-        { 
-            int value = int.Parse(date.Substring(date.Length - 1));
-
-            switch (value)
-            {
-                case 6:
-                    return DayOfWeek.Monday;
-                case 7:
-                    return DayOfWeek.Tuesday;
-                case 8:
-                    return DayOfWeek.Wednesday;
-                case 9:
-                    return DayOfWeek.Thursday;
-                case 0:
-                    return DayOfWeek.Friday;
-                case 1:
-                    return DayOfWeek.Saturday;
-                case 2:
-                    return DayOfWeek.Sunday;
-            }
-
-            throw new Exception("Invalid day");
-        
         }
 
 
         // metoda nacita zastavky
-        private void ReadBusStops()
+        private void ReadBusStops(string route)
         {
-            string path = "Zastavky.csv";
+            string path = route + "Zastavky.csv";
 
             var lines = File.ReadAllLines(path);
 
@@ -151,9 +180,9 @@ namespace MachilpebLibrary
         }
 
         // metoda nacita useky
-        private void ReadSergments()
+        private void ReadSergments(string route)
         {
-            string path = "Useky.csv";
+            string path = route + "Useky.csv";
 
             var lines = File.ReadAllLines(path);
 
@@ -163,12 +192,6 @@ namespace MachilpebLibrary
             }
 
         }
-
-
-
-
-
-
 
     }
 }
