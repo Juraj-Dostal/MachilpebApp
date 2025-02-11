@@ -28,6 +28,11 @@ namespace MachilpebLibrary
         
 
             ReadData(route);
+
+            foreach (var bus in _busList)
+            {
+                bus.SortSchedules();
+            }
         }
 
         public static DataReader GetInstance()
@@ -47,6 +52,21 @@ namespace MachilpebLibrary
             foreach (var bus in _busList)
             {
                 sb.Append(bus.ToString());
+                sb.Append("\n");
+            }
+
+            sb.Append("\n");
+
+            foreach (var shift in _shiftList)
+            {
+                sb.Append(shift.ToString());
+                sb.Append("\n");
+            }
+
+
+            foreach (var busStop in _busStopList)
+            {
+                sb.Append(busStop.Name);
                 sb.Append("\n");
             }
 
@@ -76,7 +96,7 @@ namespace MachilpebLibrary
             foreach (var line in lines)
             {
                 var values = line.Split(';');
-                _shiftList.Add(values[1]);
+                _shiftList.Add(values[1].Trim());
             }
         }
 
@@ -96,21 +116,21 @@ namespace MachilpebLibrary
                 var shift = values[1];
 
                 // ak turnus pre autobus sa nenachadza v zozname turnusov, tak sa preskoci
-                if (!_shiftList.Contains(shift) )
+                if (!_shiftList.Contains(shift))
                 {
                     continue;
                 }
 
-                // ak autobus ma viac turnusov , tak sa prida turnus k autobusu
+                // ak autobus ma viac turnusov, tak sa prida turnus k autobusu
                 if (bus == null || bus.Id != id)
                 {
                     bus = Bus.ReadBus(line);
+                    _busList.Add(bus);
                 }
                 else
                 { 
                     bus.AddShift(shift);
                 }
-                _busList.Add(bus);
 
             }
         }
@@ -128,8 +148,8 @@ namespace MachilpebLibrary
 
                 _lineSchedulesList.Add(lineSched);
 
-                // najde autobusy, ktore maju rovnaky turnus 
-                var buses = _busList.Where(b => b.Shift.Contains(lineSched.Shift)).ToList();
+                // najde autobusy, ktore maju rovnaky turnus a den ako spoj
+                var buses = _busList.Where(b => (b.Shift.Contains(lineSched.Shift) && lineSched.Operates.Contains(b.Day))).ToList();
 
                 foreach (var bus in buses)
                 { 
@@ -147,37 +167,34 @@ namespace MachilpebLibrary
             var lines = File.ReadAllLines(path);
 
             var oldId = -1;
+            var oldLineId = -1;
             BusStopSchedule? oldBss = null;
 
             foreach (var line in lines)
             {
                 var values = line.Split(',');
                 
-                if (values[8].Length == 0 && values[9].Length == 0)
-                {
-                    break;
-                }
-                if (values[9] == "<")
+                if ((values[8].Length == 0 && values[9].Length == 0) || values[9] == "<")
                 {
                     continue;
                 }
                 
                 var newId = int.Parse(values[1]);
+                var newLineId = int.Parse(values[0]);
                 
                 var bss = BusStopSchedule.ReadBusStopSchedule(line, _busStopList);
 
-                if (oldId != newId)
+                if (oldId != newId || oldLineId != newLineId)
                 {
-                    var lineSchedule = _lineSchedulesList.Find(ls => ls.Id == newId);
+                    var lineSchedules = _lineSchedulesList.Where(ls => ls.Id == newId && ls.LineId == newLineId).ToList();
 
-                    if (lineSchedule == null)
+                    foreach (var ls in lineSchedules)
                     {
-                        throw new Exception("Line schedule not found");
+                        ls.AddBusStopSchedule(bss);
                     }
 
-                    lineSchedule.AddBusStopSchedule(bss);
-
                     oldId = newId;
+                    oldLineId = newLineId;
                 }
                 else
                 {

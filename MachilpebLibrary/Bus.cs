@@ -33,6 +33,11 @@ namespace MachilpebLibrary
             this.Shift.Add(shift);
         }
 
+        public void SortSchedules()
+        {
+            schedules.Sort((x, y) => x.GetStartTime().CompareTo(y.GetStartTime()));
+        }
+
         public override string? ToString()
         {
             var sb = new StringBuilder();
@@ -44,7 +49,7 @@ namespace MachilpebLibrary
                 sb.Append(shift + " ");
             }
 
-            sb.Append("\n Schedules:");
+            sb.Append("\nSchedules:\n");
 
             foreach (var schedule in schedules)
             {

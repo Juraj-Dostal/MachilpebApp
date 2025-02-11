@@ -9,8 +9,8 @@ namespace MachilpebConsole
 
             DataReader dataReader = DataReader.GetInstance();
 
-            Console.WriteLine(dataReader.GetStatus());
-
+            // vystup do suboru
+            File.WriteAllText("C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\output.txt", dataReader.GetStatus());
 
         }
     }

@@ -40,16 +40,15 @@ namespace MachilpebLibrary
 
         public override string? ToString()
         {
-
             var sb = new StringBuilder();
 
-            sb.Append(Sequence + ". " + BusStop.Name + " " + Time + " \n");
+            sb.Append("     " + Sequence + ". " + BusStop.Name + " " + Time + " \n");
             if (Next != null)
             {
                 sb.Append(Next.ToString());
             }
 
-            return base.ToString();
+            return sb.ToString();
         }
 
         public static BusStopSchedule ReadBusStopSchedule(string line, List<BusStop> busStops)
