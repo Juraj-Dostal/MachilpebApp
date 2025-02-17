@@ -16,7 +16,7 @@ namespace MachilpebLibrary
      *  
      */
 
-    internal class BusStop
+    public class BusStop
     {
 
         public int Id { get; }
@@ -43,10 +43,16 @@ namespace MachilpebLibrary
 
         public int GetDistance(BusStop to)
         { 
+            if (this == to)
+            {
+                return 0;
+            }
+
             Segment? segment = this.Segments.Find(s => s.To == to);
             if (segment == null)
             {
-                throw new Exception("Segment not found");
+                return -1;
+                //throw new Exception("Segment not found");
             }
 
             return segment.Distance;

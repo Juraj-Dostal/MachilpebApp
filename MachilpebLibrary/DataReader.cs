@@ -16,6 +16,7 @@ namespace MachilpebLibrary
         private List<string> _shiftList;
         private List<BusStop> _busStopList;
         private List<LineSchedule> _lineSchedulesList;
+        private List<Segment> _segmentsList;
 
         private DataReader() 
         {
@@ -25,7 +26,7 @@ namespace MachilpebLibrary
             _shiftList = new List<string>();
             _busStopList = new List<BusStop>();
             _lineSchedulesList = new List<LineSchedule>();
-        
+            _segmentsList = new List<Segment>();
 
             ReadData(route);
 
@@ -33,6 +34,8 @@ namespace MachilpebLibrary
             {
                 bus.SortSchedules();
             }
+
+            EditAndControlData();
         }
 
         public static DataReader GetInstance()
@@ -74,6 +77,7 @@ namespace MachilpebLibrary
 
         }
 
+
         private void ReadData(string route)
         {
 
@@ -85,6 +89,38 @@ namespace MachilpebLibrary
             ReadBusStopSchedule(route);
 
         }
+
+        private void EditAndControlData()
+        {
+            var badBus = _busList.Where(b => b.Schedules.Count == 0).ToList();
+
+            foreach (var bus in badBus)
+            {
+                _busList.Remove(bus);
+            }
+
+            var depo = _busStopList.Find(b => b.Id == 112);
+            if (depo == null)
+            {
+                throw new Exception("Depo not found");
+            }
+
+            foreach (var bus in _busList)
+            {
+                bus.SetDepo(depo);
+            }
+
+            foreach (var bus in _busList)
+            {
+                bus.calculateDistance();
+            }
+
+            foreach (var bus in _busList)
+            {
+                bus.IsBusScheduleWell();
+            }
+        }
+
 
         // metoda nacita TurnusyZoznam
         private void ReadShift(string route)
@@ -169,6 +205,7 @@ namespace MachilpebLibrary
             var oldId = -1;
             var oldLineId = -1;
             BusStopSchedule? oldBss = null;
+            List<LineSchedule>? lineSchedules = null;
 
             foreach (var line in lines)
             {
@@ -186,7 +223,13 @@ namespace MachilpebLibrary
 
                 if (oldId != newId || oldLineId != newLineId)
                 {
-                    var lineSchedules = _lineSchedulesList.Where(ls => ls.Id == newId && ls.LineId == newLineId).ToList();
+
+                    if (lineSchedules != null && oldBss != null)
+                    {
+                        setLastBusSTopSchedule(lineSchedules, oldBss);
+                    }
+
+                    lineSchedules = _lineSchedulesList.Where(ls => ls.Id == newId && ls.LineId == newLineId).ToList();
 
                     foreach (var ls in lineSchedules)
                     {
@@ -207,6 +250,19 @@ namespace MachilpebLibrary
                 
                 oldBss = bss;
                 
+            }
+
+            if (lineSchedules != null && oldBss != null)
+            {
+                setLastBusSTopSchedule(lineSchedules, oldBss);
+            }
+        }
+
+        private void setLastBusSTopSchedule(List<LineSchedule> lineSchedules, BusStopSchedule bss)
+        {
+            foreach (var ls in lineSchedules)
+            {
+                ls.AddLastBusStopSchedule(bss);
             }
         }
 
@@ -233,7 +289,8 @@ namespace MachilpebLibrary
 
             foreach (var line in lines)
             { 
-                Segment.ReadSegment(line, _busStopList);
+                var segment = Segment.ReadSegment(line, _busStopList);
+                _segmentsList.Add(segment);
             }
 
         }

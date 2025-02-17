@@ -15,7 +15,7 @@ namespace MachilpebLibrary
      * TIME je reprezentovane ako pocet minut od polnoci v dni
      */
 
-    internal class BusStopSchedule
+    public class BusStopSchedule
     {
         public int Sequence { get; private set; }
         public BusStop BusStop { get; }
@@ -38,13 +38,34 @@ namespace MachilpebLibrary
             this.Next = next;
         }
 
+        public override bool Equals(object? obj)
+        {
+            BusStopSchedule? other = obj as BusStopSchedule;
+
+            if (other == null)
+            {
+                return false;
+            }
+
+            if (this.BusStop != other.BusStop || this.Time != other.Time )
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public override string? ToString()
         {
             var sb = new StringBuilder();
 
-            sb.Append("     " + Sequence + ". " + BusStop.Name + " " + Time + " \n");
+
+            sb.Append("     " + Sequence + ". " + BusStop.Name + " " + Time );
             if (Next != null)
             {
+                var vzdialenost = this.BusStop.GetDistance(this.Next.BusStop);
+
+                sb.Append(" " + vzdialenost + "\n");
                 sb.Append(Next.ToString());
             }
 

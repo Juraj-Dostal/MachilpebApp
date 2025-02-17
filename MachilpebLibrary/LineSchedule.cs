@@ -15,14 +15,15 @@ namespace MachilpebLibrary
      * 
      */
 
-    internal class LineSchedule
+    public class LineSchedule
     {
 
         public int Id { get; }
         public int LineId { get; }
         public string Shift { get; }
         public List<DayOfWeek> Operates { get; private set; }
-        public BusStopSchedule? BusStopSchedules { get; private set; }
+        public BusStopSchedule? FirstBusStopSchedule { get; private set; }
+        public BusStopSchedule? LastBusStopSchedule { get; private set; }
 
         public LineSchedule(int id, int lineId, string shift, List<DayOfWeek> operates)
         {
@@ -34,18 +35,75 @@ namespace MachilpebLibrary
 
         public void AddBusStopSchedule(BusStopSchedule busStopSchedule)
         {
-            this.BusStopSchedules = busStopSchedule;
+            if (FirstBusStopSchedule != null)
+            {
+                busStopSchedule.SetNext(FirstBusStopSchedule);
+            }
+
+            this.FirstBusStopSchedule = busStopSchedule;
+        }
+
+        public void AddLastBusStopSchedule(BusStopSchedule busStopSchedule)
+        {
+            if (LastBusStopSchedule != null)
+            {
+                LastBusStopSchedule.SetNext(busStopSchedule);
+            }
+
+            this.LastBusStopSchedule = busStopSchedule;
         }
 
         public int GetStartTime()
         {
-
-            if (BusStopSchedules == null)
+            if (FirstBusStopSchedule == null)
             {
                 throw new Exception("Bus stop schedules not set");
             }
 
-            return BusStopSchedules.Time;
+            return FirstBusStopSchedule.Time;
+        }
+
+        public int GetEndTime()
+        {
+            if (LastBusStopSchedule == null)
+            {
+                throw new Exception("Bus stop schedules not set");
+            }
+
+            return LastBusStopSchedule.Time;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            LineSchedule? other = obj as LineSchedule;
+
+            if (other == null)
+            {
+                return false;
+            }
+
+            // skontroluje ci sa jedna o rovnaku linku a zmenu
+            //if (this.LineId != other.LineId && this.Shift != other.Shift)
+            //{
+            //    return false;
+            //}
+
+            // skontroluje ci sa jedna o rovnaky casovy harmonogram
+            var thisbss = this.FirstBusStopSchedule;
+            var otherbss = other.FirstBusStopSchedule;
+
+            while ((thisbss != null && otherbss != null))
+            {
+                if (!thisbss.Equals(otherbss))
+                {
+                    return false;
+                }
+
+                thisbss = thisbss.Next;
+                otherbss = otherbss.Next;
+            }
+
+            return true;
         }
 
         public override string? ToString()
@@ -54,9 +112,9 @@ namespace MachilpebLibrary
 
             sb.Append(Id + " line " + LineId + " shift: " + Shift + "\n");
 
-            if (BusStopSchedules != null)
+            if (FirstBusStopSchedule != null)
             {
-                sb.Append("Bus stop schedules:\n" + BusStopSchedules.ToString() + " \n");
+                sb.Append("Bus stop schedules:\n" + FirstBusStopSchedule.ToString() + " \n");
             }
 
             return sb.ToString();
