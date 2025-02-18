@@ -30,10 +30,7 @@ namespace MachilpebLibrary
 
             ReadData(route);
 
-            foreach (var bus in _busList)
-            {
-                bus.SortSchedules();
-            }
+            
 
             EditAndControlData();
         }
@@ -92,6 +89,12 @@ namespace MachilpebLibrary
 
         private void EditAndControlData()
         {
+
+            foreach (var bus in _busList)
+            {
+                bus.SortSchedules();
+            }
+
             var badBus = _busList.Where(b => b.Schedules.Count == 0).ToList();
 
             foreach (var bus in badBus)
@@ -283,7 +286,7 @@ namespace MachilpebLibrary
         // metoda nacita useky
         private void ReadSergments(string route)
         {
-            string path = route + "Useky.csv";
+            string path = route + "UsekyEdit(doplnene).csv";
 
             var lines = File.ReadAllLines(path).Skip(1);
 

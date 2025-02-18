@@ -51,8 +51,10 @@ namespace MachilpebLibrary
             Segment? segment = this.Segments.Find(s => s.To == to);
             if (segment == null)
             {
+
+                //throw new Exception("Segment not found\n From:" + this.Id + " " + this.Name + " To:" + to.Id + " " + to.Name + "\n");
+                Console.WriteLine("Segment not found\n From:" + this.Id + " " + this.Name + " To:" + to.Id + " " + to.Name + "\n");
                 return -1;
-                //throw new Exception("Segment not found");
             }
 
             return segment.Distance;

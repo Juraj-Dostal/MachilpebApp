@@ -82,6 +82,9 @@ namespace MachilpebLibrary
             int sequence = int.Parse(values[2]);
             int idBusStop = int.Parse(values[3]);
 
+            // specialny pripad pri zastavke 207 autobusova vymenena za 42 Zeleznicna stanica
+            idBusStop = idBusStop == 207 ? 42 : idBusStop;
+
             var busStop = busStops.Find(bs => bs.Id == idBusStop);
 
             if (busStop == null)

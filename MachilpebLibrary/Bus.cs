@@ -96,16 +96,21 @@ namespace MachilpebLibrary
 
             // Ak startovacie depo je rovnako ako zacina autobus tak da 0
             var prev = this.StartDepo;
+            int distance = 0;
 
             foreach (var schedule in Schedules)
             {
                 var actual = schedule.FirstBusStopSchedule;
 
-                var distance = schedule.LastBusStopSchedule.BusStop.GetDistance(schedule.FirstBusStopSchedule.BusStop);
+                distance = prev.BusStop.GetDistance(actual.BusStop);
                 Distances.Add(distance);
 
                 prev = schedule.LastBusStopSchedule;
             }
+
+            var last = this.EndDepo;
+            distance = prev.BusStop.GetDistance(last.BusStop);
+            Distances.Add(distance);
         }
 
 
@@ -229,7 +234,7 @@ namespace MachilpebLibrary
         }
     }
     
-    enum DayOfWeek
+    public enum DayOfWeek
     {
         Monday,
         Tuesday,
