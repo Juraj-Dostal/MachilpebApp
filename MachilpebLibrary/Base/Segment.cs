@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace MachilpebLibrary
+namespace MachilpebLibrary.Base
 {
     public class Segment
     {
@@ -16,9 +16,9 @@ namespace MachilpebLibrary
 
         public Segment(BusStop from, BusStop to, int distance)
         {
-            this.From = from;
-            this.To = to;
-            this.Distance = distance;
+            From = from;
+            To = to;
+            Distance = distance;
         }
 
         public static Segment ReadSegment(string line, List<BusStop> busStops)

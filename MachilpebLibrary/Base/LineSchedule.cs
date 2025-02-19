@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace MachilpebLibrary
+namespace MachilpebLibrary.Base
 {
 
     /*
@@ -27,10 +23,10 @@ namespace MachilpebLibrary
 
         public LineSchedule(int id, int lineId, string shift, List<DayOfWeek> operates)
         {
-            this.Id = id;
-            this.LineId = lineId;
-            this.Shift = shift;
-            this.Operates = operates;
+            Id = id;
+            LineId = lineId;
+            Shift = shift;
+            Operates = operates;
         }
 
         public void AddBusStopSchedule(BusStopSchedule busStopSchedule)
@@ -40,7 +36,7 @@ namespace MachilpebLibrary
                 busStopSchedule.SetNext(FirstBusStopSchedule);
             }
 
-            this.FirstBusStopSchedule = busStopSchedule;
+            FirstBusStopSchedule = busStopSchedule;
         }
 
         public void AddLastBusStopSchedule(BusStopSchedule busStopSchedule)
@@ -50,7 +46,7 @@ namespace MachilpebLibrary
                 LastBusStopSchedule.SetNext(busStopSchedule);
             }
 
-            this.LastBusStopSchedule = busStopSchedule;
+            LastBusStopSchedule = busStopSchedule;
         }
 
         public int GetStartTime()
@@ -89,10 +85,10 @@ namespace MachilpebLibrary
             //}
 
             // skontroluje ci sa jedna o rovnaky casovy harmonogram
-            var thisbss = this.FirstBusStopSchedule;
+            var thisbss = FirstBusStopSchedule;
             var otherbss = other.FirstBusStopSchedule;
 
-            while ((thisbss != null && otherbss != null))
+            while (thisbss != null && otherbss != null)
             {
                 if (!thisbss.Equals(otherbss))
                 {
@@ -120,6 +116,11 @@ namespace MachilpebLibrary
             return sb.ToString();
         }
 
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, LineId, Shift, Operates, FirstBusStopSchedule, LastBusStopSchedule);
+        }
+
         public static LineSchedule ReadLineSchedule(string line)
         {
             string[] values = line.Split(',');
@@ -130,7 +131,7 @@ namespace MachilpebLibrary
             var operates = new List<DayOfWeek>();
 
             for (int i = 2; values[i].Replace("\"", "").Length != 0; i++)
-            { 
+            {
                 int code = int.Parse(values[i].Replace("\"", ""));
 
                 if (code == 1)
@@ -139,7 +140,7 @@ namespace MachilpebLibrary
 
                 }
                 else if (code == 2)
-                { 
+                {
                     operates.AddRange([DayOfWeek.Saturday, DayOfWeek.Sunday]);
                 }
                 else if (3 < code && code < 12)
@@ -174,5 +175,6 @@ namespace MachilpebLibrary
             }
         }
 
+        
     }
 }

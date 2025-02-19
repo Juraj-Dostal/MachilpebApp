@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Text;
 
-namespace MachilpebLibrary
+namespace MachilpebLibrary.Base
 {
     /*
      * Trieda BusStopSchedule
@@ -24,18 +19,18 @@ namespace MachilpebLibrary
 
         public BusStopSchedule(int sequence, BusStop busStop, int time)
         {
-            this.Sequence = sequence;
-            this.BusStop = busStop;
-            this.Time = time;
+            Sequence = sequence;
+            BusStop = busStop;
+            Time = time;
         }
 
         public void SetNext(BusStopSchedule next)
         {
-            if (this.Next != null)
+            if (Next != null)
             {
                 throw new Exception("Next already set");
             }
-            this.Next = next;
+            Next = next;
         }
 
         public override bool Equals(object? obj)
@@ -47,7 +42,7 @@ namespace MachilpebLibrary
                 return false;
             }
 
-            if (this.BusStop != other.BusStop || this.Time != other.Time )
+            if (BusStop != other.BusStop || Time != other.Time)
             {
                 return false;
             }
@@ -60,10 +55,10 @@ namespace MachilpebLibrary
             var sb = new StringBuilder();
 
 
-            sb.Append("     " + Sequence + ". " + BusStop.Name + " " + Time );
+            sb.Append("     " + Sequence + ". " + BusStop.Name + " " + Time);
             if (Next != null)
             {
-                var vzdialenost = this.BusStop.GetDistance(this.Next.BusStop);
+                var vzdialenost = BusStop.GetDistance(Next.BusStop);
 
                 sb.Append(" " + vzdialenost + "\n");
                 sb.Append(Next.ToString());
@@ -71,14 +66,19 @@ namespace MachilpebLibrary
 
             return sb.ToString();
         }
-
+        
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Sequence, BusStop, Next, Time);
+        }
+        
         public static BusStopSchedule ReadBusStopSchedule(string line, List<BusStop> busStops)
         {
             string[] values = line.Split(',');
-                
+
             var stime = values[8].Length == 0 ? values[9] : values[8];
 
-            var time =  int.Parse(stime.Substring(0, 2)) * 60 + int.Parse(stime.Substring(2, 2));
+            var time = int.Parse(stime.Substring(0, 2)) * 60 + int.Parse(stime.Substring(2, 2));
             int sequence = int.Parse(values[2]);
             int idBusStop = int.Parse(values[3]);
 
@@ -92,7 +92,9 @@ namespace MachilpebLibrary
                 throw new Exception("Bus stop not found");
             }
 
-            return new BusStopSchedule(sequence ,busStop, time);
+            return new BusStopSchedule(sequence, busStop, time);
         }
+
+        
     }
 }

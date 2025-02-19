@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MachilpebLibrary
+namespace MachilpebLibrary.Base
 {
 
     /*
@@ -25,36 +25,33 @@ namespace MachilpebLibrary
         public double Longitude { get; }
 
         // Zoznam usekov, ktore obsahuju usek z tejto zastavky
-        private List<Segment> Segments;
+        private readonly List<Segment> _segments;
 
         public BusStop(int id, string name, double latitute, double longitute)
         {
-            this.Id = id;
-            this.Name = name;
-            this.Latitude = latitute;
-            this.Longitude = longitute;
-            this.Segments = new List<Segment>();
+            Id = id;
+            Name = name;
+            Latitude = latitute;
+            Longitude = longitute;
+            _segments = [];
         }
 
         public void AddSegment(Segment segment)
         {
-            this.Segments.Add(segment);
+            _segments.Add(segment);
         }
 
         public int GetDistance(BusStop to)
-        { 
+        {
             if (this == to)
             {
                 return 0;
             }
 
-            Segment? segment = this.Segments.Find(s => s.To == to);
+            Segment? segment = _segments.Find(s => s.To == to);
             if (segment == null)
             {
-
-                //throw new Exception("Segment not found\n From:" + this.Id + " " + this.Name + " To:" + to.Id + " " + to.Name + "\n");
-                Console.WriteLine("Segment not found\n From:" + this.Id + " " + this.Name + " To:" + to.Id + " " + to.Name + "\n");
-                return -1;
+                throw new Exception("Segment not found\n From:" + this.Id + " " + this.Name + " To:" + to.Id + " " + to.Name + "\n");
             }
 
             return segment.Distance;

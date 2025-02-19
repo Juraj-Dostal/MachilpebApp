@@ -1,4 +1,4 @@
-﻿using MachilpebLibrary;
+﻿using MachilpebLibrary.Base;
 
 namespace MachilpebConsole
 {

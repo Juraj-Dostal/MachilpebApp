@@ -1,71 +1,93 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace MachilpebLibrary
+namespace MachilpebLibrary.Base
 {
     public class Bus
-    {                
+    {
         public int Id { get; private set; }
         public DayOfWeek Day { get; private set; }
-        public List<string> Shift { get; private set; }
-        public List<LineSchedule> Schedules { get;  private set; }
+        
         public BusStopSchedule? StartDepo { get; private set; }
         public BusStopSchedule? EndDepo { get; private set; }
 
-        private List<int> Distances; // vzdialenosti medzi presunom na nasledujucu LineSchedule
+        private readonly List<int> _distances; // vzdialenosti medzi presunom na nasledujucu LineSchedule
+        private readonly List<string> _shift;
+        private readonly List<LineSchedule> _schedules;
 
         public Bus(int id, string shift, DayOfWeek day)
         {
-            this.Id = id;
-            this.Shift = new List<string>();
-            this.Shift.Add(shift);
-            this.Day = day;
-            this.Schedules = new List<LineSchedule>();
-            this.Distances = new List<int>();
+            Id = id;
+            _shift = [shift];
+            Day = day;
+            _schedules = [];
+            _distances = [];
         }
 
         public void AddLineSchedule(LineSchedule lineSchedule)
         {
-            Schedules.Add(lineSchedule);
+            _schedules.Add(lineSchedule);
         }
 
         public void AddShift(string shift)
         {
-            this.Shift.Add(shift);
+            _shift.Add(shift);
         }
 
         public void SortSchedules()
         {
-            Schedules.Sort((x, y) => x.GetStartTime().CompareTo(y.GetStartTime()));
+            _schedules.Sort((x, y) => x.GetStartTime().CompareTo(y.GetStartTime()));
+        }
+
+        public ImmutableList<LineSchedule> GetSchedules()
+        {
+            return _schedules.ToImmutableList();
+        }
+
+        public ImmutableList<string> GetShift()
+        {
+            return _shift.ToImmutableList();
         }
 
         public BusStopSchedule GetFirstBusStopInSchedule()
         {
-            return Schedules[0].FirstBusStopSchedule;
+            var bus = _schedules[0].FirstBusStopSchedule;
+
+            if (bus == null)
+            {
+                throw new Exception("Last bus stop not set");
+            }
+
+            return bus;
         }
 
         public BusStopSchedule GetLastBusStopInSchedule()
         {
-            return Schedules[Schedules.Count - 1].LastBusStopSchedule;
+            var bus = _schedules[_schedules.Count - 1].LastBusStopSchedule;
+
+            if (bus == null)
+            {
+                throw new Exception("Last bus stop not set");
+            }
+
+            return bus;
         }
 
         public void AddFirstBusStopInSchedule(BusStopSchedule busStopSchedule)
         {
-            Schedules[0].AddBusStopSchedule(busStopSchedule);
+            _schedules[0].AddBusStopSchedule(busStopSchedule);
         }
 
         public void AddLastBusStopInSchedule(BusStopSchedule busStopSchedule)
         {
-            Schedules[Schedules.Count - 1].AddLastBusStopSchedule(busStopSchedule);
+            _schedules[_schedules.Count - 1].AddLastBusStopSchedule(busStopSchedule);
         }
 
         public void SetDepo(BusStop busStop)
         {
-            if (this.StartDepo != null || this.EndDepo != null)
-            { 
+            if (StartDepo != null || EndDepo != null)
+            {
                 throw new Exception("Start or end already set");
             }
 
@@ -74,54 +96,77 @@ namespace MachilpebLibrary
 
             if (first.BusStop.Id == busStop.Id)
             {
-                this.StartDepo = first;
+                StartDepo = first;
             }
-            else {
-                this.StartDepo = new BusStopSchedule(0, busStop, first.Time - 10);
+            else
+            {
+                StartDepo = new BusStopSchedule(0, busStop, first.Time - 10);
             }
 
             if (last.BusStop.Id == busStop.Id)
             {
-                this.EndDepo = last;
+                EndDepo = last;
             }
             else
             {
-                this.EndDepo = new BusStopSchedule(0, busStop, last.Time + 10);
+                EndDepo = new BusStopSchedule(0, busStop, last.Time + 10);
             }
-            
+
         }
 
         public void calculateDistance()
         {
 
             // Ak startovacie depo je rovnako ako zacina autobus tak da 0
-            var prev = this.StartDepo;
+            var prev = StartDepo;
+
+            if (prev == null)
+            {
+                throw new Exception("Start depo not set");
+            }
+
             int distance = 0;
 
-            foreach (var schedule in Schedules)
+            foreach (var schedule in _schedules)
             {
                 var actual = schedule.FirstBusStopSchedule;
 
+                if (actual == null)
+                {
+                    throw new Exception("First bus stop not set");
+                }
+
                 distance = prev.BusStop.GetDistance(actual.BusStop);
-                Distances.Add(distance);
+                _distances.Add(distance);
 
                 prev = schedule.LastBusStopSchedule;
+
+                if (prev == null)
+                {
+                    throw new Exception("Last bus stop not set");
+                }
             }
 
-            var last = this.EndDepo;
+            var last = EndDepo;
+
+            if (last == null)
+            {
+                throw new Exception("End depo not set");
+            }
+
             distance = prev.BusStop.GetDistance(last.BusStop);
-            Distances.Add(distance);
+            _distances.Add(distance);
         }
 
 
         // metoda skontroluje ci je casovy harmonogram linky spravne zoradeny a opravy duplicity
         public bool IsBusScheduleWell()
         {
-            List<LineSchedule> toRemove = new List<LineSchedule>();
+            List<LineSchedule> toRemove = [];
 
             LineSchedule? prev = null;
 
-            foreach (var schedule in Schedules)
+            foreach (var schedule in _schedules)
             {
                 if (prev == null)
                 {
@@ -142,7 +187,7 @@ namespace MachilpebLibrary
                     toRemove.Add(schedule);
                 }
                 else
-                { 
+                {
                     throw new Exception("Invalid schedule\n" + prev.ToString() + "\n" + schedule.ToString());
                 }
 
@@ -151,7 +196,7 @@ namespace MachilpebLibrary
 
             foreach (var schedule in toRemove)
             {
-                Schedules.Remove(schedule);
+                _schedules.Remove(schedule);
             }
 
             return true;
@@ -163,7 +208,7 @@ namespace MachilpebLibrary
 
             sb.Append(Id + ". bus on " + Day.ToString() + " shift: ");
 
-            foreach (var shift in Shift)
+            foreach (var shift in _shift)
             {
                 sb.Append(shift + " ");
             }
@@ -177,7 +222,7 @@ namespace MachilpebLibrary
 
             sb.Append(StartDepo.ToString() + "\n");
 
-            foreach (var schedule in Schedules)
+            foreach (var schedule in _schedules)
             {
                 sb.Append(schedule.ToString());
             }
@@ -186,14 +231,14 @@ namespace MachilpebLibrary
 
             sb.Append("Distance: ");
 
-            foreach (var distance in Distances)
+            foreach (var distance in _distances)
             {
                 sb.Append(distance + " ");
             }
 
             sb.Append("\n");
 
-            return sb.ToString(); 
+            return sb.ToString();
         }
 
         public static Bus ReadBus(string line)
@@ -233,7 +278,7 @@ namespace MachilpebLibrary
 
         }
     }
-    
+
     public enum DayOfWeek
     {
         Monday,

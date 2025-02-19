@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MachilpebLibrary
+namespace MachilpebLibrary.Base
 {
     public sealed class DataReader
     {
@@ -18,7 +19,7 @@ namespace MachilpebLibrary
         private List<LineSchedule> _lineSchedulesList;
         private List<Segment> _segmentsList;
 
-        private DataReader() 
+        private DataReader()
         {
             string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\";
 
@@ -30,8 +31,6 @@ namespace MachilpebLibrary
 
             ReadData(route);
 
-            
-
             EditAndControlData();
         }
 
@@ -42,6 +41,16 @@ namespace MachilpebLibrary
                 _instance = new DataReader();
             }
             return _instance;
+        }
+
+        public ImmutableList<BusStop> GetBusStop()
+        {
+            return _busStopList.ToImmutableList();
+        }
+
+        public ImmutableList<Bus> GetBuses()
+        {
+            return _busList.ToImmutableList();
         }
 
         public string GetStatus()
@@ -95,7 +104,7 @@ namespace MachilpebLibrary
                 bus.SortSchedules();
             }
 
-            var badBus = _busList.Where(b => b.Schedules.Count == 0).ToList();
+            var badBus = _busList.Where(b => b.GetSchedules().Count == 0).ToList();
 
             foreach (var bus in badBus)
             {
@@ -167,7 +176,7 @@ namespace MachilpebLibrary
                     _busList.Add(bus);
                 }
                 else
-                { 
+                {
                     bus.AddShift(shift);
                 }
 
@@ -188,10 +197,10 @@ namespace MachilpebLibrary
                 _lineSchedulesList.Add(lineSched);
 
                 // najde autobusy, ktore maju rovnaky turnus a den ako spoj
-                var buses = _busList.Where(b => (b.Shift.Contains(lineSched.Shift) && lineSched.Operates.Contains(b.Day))).ToList();
+                var buses = _busList.Where(b => b.GetShift().Contains(lineSched.Shift) && lineSched.Operates.Contains(b.Day)).ToList();
 
                 foreach (var bus in buses)
-                { 
+                {
                     bus.AddLineSchedule(lineSched);
                 }
 
@@ -213,15 +222,15 @@ namespace MachilpebLibrary
             foreach (var line in lines)
             {
                 var values = line.Split(',');
-                
-                if ((values[8].Length == 0 && values[9].Length == 0) || values[9] == "<")
+
+                if (values[8].Length == 0 && values[9].Length == 0 || values[9] == "<")
                 {
                     continue;
                 }
-                
+
                 var newId = int.Parse(values[1]);
                 var newLineId = int.Parse(values[0]);
-                
+
                 var bss = BusStopSchedule.ReadBusStopSchedule(line, _busStopList);
 
                 if (oldId != newId || oldLineId != newLineId)
@@ -244,15 +253,15 @@ namespace MachilpebLibrary
                 }
                 else
                 {
-                    if (oldBss == null) 
+                    if (oldBss == null)
                     {
                         throw new Exception("Bus stop schedule is null");
                     }
                     oldBss.SetNext(bss);
                 }
-                
+
                 oldBss = bss;
-                
+
             }
 
             if (lineSchedules != null && oldBss != null)
@@ -277,8 +286,8 @@ namespace MachilpebLibrary
 
             var lines = File.ReadAllLines(path).Skip(1);
 
-            foreach (var line in lines) 
-            { 
+            foreach (var line in lines)
+            {
                 _busStopList.Add(BusStop.ReadBusStop(line));
             }
         }
@@ -291,7 +300,7 @@ namespace MachilpebLibrary
             var lines = File.ReadAllLines(path).Skip(1);
 
             foreach (var line in lines)
-            { 
+            {
                 var segment = Segment.ReadSegment(line, _busStopList);
                 _segmentsList.Add(segment);
             }
