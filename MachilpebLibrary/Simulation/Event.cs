@@ -14,38 +14,55 @@ namespace MachilpebLibrary.Simulation
      * 
      * 
      */
-    public class Event
+    public abstract class Event
     {
 
         public Bus Bus { get; }
-        public int Time { get; }
         public BusStop BusStop { get; }
 
-        public Event(Bus bus, int time, BusStop busStop)
+        public Event(Bus bus, BusStop busStop)
         {
             Bus = bus;
-            Time = time;
             BusStop = busStop;
         }
 
-
-
-
+        public abstract void Trigger();
 
     }
 
 
     public class ArriveEvent : Event
     {
-        public ArriveEvent(Bus bus, int time, BusStop busStop) : base(bus, time, busStop)
+
+        public LineSchedule LineSchedule { get; }
+
+        public ArriveEvent(Bus bus, BusStop busStop) : base(bus, busStop)
         {
+        }
+
+        public override void Trigger()
+        {
+            //doplnit vzdialenost
+
+            Bus.ConsumeBattery();
+
         }
     }
 
     public class ChargingEvent : Event
     {
-        public ChargingEvent(Bus bus, int time, BusStop busStop) : base(bus, time, busStop)
+        public int StartTime { get; }
+        public int EndTime { get; set; }
+
+        public ChargingEvent(Bus bus, BusStop busStop, int startTime, int EndTime ) : base(bus, busStop)
         {
+            this.StartTime = startTime;
+            this.EndTime = EndTime;
+        }
+
+        public override void Trigger()
+        {
+            Bus.ChargeBattery(this.EndTime - this.StartTime);
         }
     }
 }

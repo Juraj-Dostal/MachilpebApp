@@ -23,11 +23,15 @@ namespace MachilpebLibrary.Base
         {
             string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\";
 
-            _busList = new List<Bus>();
-            _shiftList = new List<string>();
-            _busStopList = new List<BusStop>();
-            _lineSchedulesList = new List<LineSchedule>();
-            _segmentsList = new List<Segment>();
+            _busList = [];
+            _shiftList = [];
+            _busStopList = [];
+            _lineSchedulesList = [];
+            _segmentsList = [];
+
+            Bus.BATTERY_CAPACITY = 140;
+            Bus.BATTERY_CONSUMPTION = 0.8;
+            Bus.BATTERY_CHARGING = 1;
 
             ReadData(route);
 

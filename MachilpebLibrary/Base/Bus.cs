@@ -6,6 +6,12 @@ namespace MachilpebLibrary.Base
 {
     public class Bus
     {
+        // konstanty
+        public static double BATTERY_CAPACITY { get; set; } // kWh
+        public static double BATTERY_CONSUMPTION { get; set; } // kWh/km
+        public static double BATTERY_CHARGING { get; set; } // kWh/min
+
+        // identifikacia busu
         public int Id { get; private set; }
         public DayOfWeek Day { get; private set; }
         
@@ -15,6 +21,9 @@ namespace MachilpebLibrary.Base
         private readonly List<int> _distances; // vzdialenosti medzi presunom na nasledujucu LineSchedule
         private readonly List<string> _shift;
         private readonly List<LineSchedule> _schedules;
+
+        // atributy ku simulacii
+        private double _battery; // kWh 
 
         public Bus(int id, string shift, DayOfWeek day)
         {
@@ -83,6 +92,35 @@ namespace MachilpebLibrary.Base
         {
             _schedules[_schedules.Count - 1].AddLastBusStopSchedule(busStopSchedule);
         }
+
+        // metoda nabije bateria podla casu nabijania
+        public void ChargeBattery(int time)
+        {
+            _battery += (int)(time * BATTERY_CHARGING);
+            if (_battery > BATTERY_CAPACITY)
+            {
+                _battery = BATTERY_CAPACITY;
+            }
+        }
+
+        // metoda nastavi bateriu na plnu kapacitu
+        public void ChargeBattery()
+        {
+            _battery = BATTERY_CAPACITY;
+        }
+
+        // metoda spotrebuje bateriu podla prejdenych metrov
+        public void ConsumeBattery(int meters)
+        {
+            var kilometers = meters / 1000;
+            _battery -= kilometers * BATTERY_CONSUMPTION;
+            if (_battery < 0 )
+            {
+                _battery = 0;
+            }
+        }
+
+
 
         public void SetDepo(BusStop busStop)
         {
