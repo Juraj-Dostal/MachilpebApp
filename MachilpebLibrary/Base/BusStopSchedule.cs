@@ -24,6 +24,17 @@ namespace MachilpebLibrary.Base
             Time = time;
         }
 
+        // vrati vzdialenost na dalsiu zastavku
+        public int GetDistanceToNext()
+        { 
+            if (Next == null)
+            {
+                throw new Exception("Next not set");
+            }
+
+            return BusStop.GetDistance(Next.BusStop);
+        }
+
         public void SetNext(BusStopSchedule next)
         {
             if (Next != null)

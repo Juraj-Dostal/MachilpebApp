@@ -49,6 +49,23 @@ namespace MachilpebLibrary.Base
             _schedules.Sort((x, y) => x.GetStartTime().CompareTo(y.GetStartTime()));
         }
 
+        private LineSchedule GetNextLineSchedule(LineSchedule? lineSchedule)
+        {
+            if (lineSchedule == null)
+            {
+                return _schedules.First();
+            }
+
+            var index = _schedules.IndexOf(lineSchedule);
+
+            if (index == _schedules.Count)
+            {
+                return null;
+            }
+
+            return this._schedules[index + 1];
+        }
+
         public ImmutableList<LineSchedule> GetSchedules()
         {
             return _schedules.ToImmutableList();
@@ -119,8 +136,6 @@ namespace MachilpebLibrary.Base
                 _battery = 0;
             }
         }
-
-
 
         public void SetDepo(BusStop busStop)
         {

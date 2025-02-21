@@ -31,9 +31,8 @@ namespace MachilpebLibrary.Simulation
             {
                 var currentEvent = _eventCalendar.Dequeue();
                 var bus = currentEvent.Bus;
-                var eventType = currentEvent.EventType;
 
-                switch (eventType)
+                /*switch (eventType)
                 {
                     case EventType.Start:
                         // pridanie udalosti na koniec trasy
@@ -45,7 +44,7 @@ namespace MachilpebLibrary.Simulation
                         break;
                     default:
                         throw new ArgumentException("Unknown event type");
-                }
+                }*/
             }
         }
 
@@ -55,7 +54,10 @@ namespace MachilpebLibrary.Simulation
 
             foreach (var bus in buses)
             {
-                _eventCalendar.Enqueue(new Event(bus, EventType.Start), bus.StartTime);
+                
+
+
+                _eventCalendar.Enqueue(new Event(bus), bus.StartTime);
             }
 
         }

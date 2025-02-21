@@ -69,6 +69,21 @@ namespace MachilpebLibrary.Base
             return LastBusStopSchedule.Time;
         }
 
+        public int GetDistance()
+        {
+            int distance = 0;
+            var bss = FirstBusStopSchedule;
+
+            while (bss != null)
+            {
+                distance += bss.GetDistanceToNext();
+                bss = bss.Next;
+            }
+
+            return distance;
+
+        }
+
         public override bool Equals(object? obj)
         {
             LineSchedule? other = obj as LineSchedule;

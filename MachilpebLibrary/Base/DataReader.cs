@@ -299,7 +299,7 @@ namespace MachilpebLibrary.Base
         // metoda nacita useky
         private void ReadSergments(string route)
         {
-            string path = route + "UsekyEdit(doplnene).csv";
+            string path = route + "UsekyEdit.txt"; //Edit(doplnene)
 
             var lines = File.ReadAllLines(path).Skip(1);
 

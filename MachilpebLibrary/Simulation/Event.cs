@@ -11,12 +11,19 @@ namespace MachilpebLibrary.Simulation
     /*
      * Trieda reprezentujuca udalost v simulacii
      * 
+     * Abstractna trieda Event
      * 
+     * Potomkovia:
+     * 
+     *  ArriveEvent - reprezentuje prichod autobusu na konecnu
+     *  ChargingEvent - reprezentuje ukoncenie nabijanie autobusu
+     *  RelocationEvent - reprezentuje presun autobusu na dalsi LineSchedule 
+     *  ! Nabijanie moze nastat pred presunom alebo po presune na dalsi LineSchedule
+     *  
      * 
      */
     public abstract class Event
     {
-
         public Bus Bus { get; }
         public BusStop BusStop { get; }
 
@@ -27,25 +34,20 @@ namespace MachilpebLibrary.Simulation
         }
 
         public abstract void Trigger();
-
     }
-
 
     public class ArriveEvent : Event
     {
-
         public LineSchedule LineSchedule { get; }
 
-        public ArriveEvent(Bus bus, BusStop busStop) : base(bus, busStop)
+        public ArriveEvent(Bus bus, BusStop busStop, LineSchedule lineSchedule) : base(bus, busStop)
         {
+            LineSchedule = lineSchedule;
         }
 
         public override void Trigger()
         {
-            //doplnit vzdialenost
-
-            Bus.ConsumeBattery();
-
+            Bus.ConsumeBattery(LineSchedule.GetDistance());
         }
     }
 
@@ -63,6 +65,21 @@ namespace MachilpebLibrary.Simulation
         public override void Trigger()
         {
             Bus.ChargeBattery(this.EndTime - this.StartTime);
+        }
+    }
+
+    public class RelocationEvent : Event
+    {
+        public BusStop Destination { get; }
+
+        public RelocationEvent(Bus bus, BusStop busStop, BusStop destination) : base(bus, busStop)
+        {
+            Destination = destination;
+        }
+
+        public override void Trigger()
+        {
+            Bus.ConsumeBattery(BusStop.GetDistance(Destination));
         }
     }
 }

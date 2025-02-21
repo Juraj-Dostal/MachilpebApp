@@ -23,7 +23,7 @@ namespace MachilpebLibrary.Base
 
         public static Segment ReadSegment(string line, List<BusStop> busStops)
         {
-            string[] parts = line.Split(';');
+            string[] parts = line.Split(',');
             int fromId = int.Parse(parts[1]);
             int toId = int.Parse(parts[2]);
             int distance = int.Parse(parts[3]);
