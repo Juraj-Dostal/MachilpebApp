@@ -20,31 +20,27 @@ namespace MachilpebLibrary.Simulation
 
         public DiscreteEventSimulation()
         {
-            _buses = DataReader.GetInstance().GetBuses();
-            _eventCalendar = new PriorityQueue<Event, int>();
-            _individual = new Individual();
+            this._buses = DataReader.GetInstance().GetBuses();
+            this._eventCalendar = new PriorityQueue<Event, int>();
+            this._individual = new Individual();
         }
 
         public void simulate()
         {
-            while (_eventCalendar.Count > 0)
+            foreach (Base.DayOfWeek day in Enum.GetValues(typeof(Base.DayOfWeek)))
             {
-                var currentEvent = _eventCalendar.Dequeue();
-                var bus = currentEvent.Bus;
+                InitSimulate(day);
 
-                /*switch (eventType)
+                while (_eventCalendar.Count > 0)
                 {
-                    case EventType.Start:
-                        // pridanie udalosti na koniec trasy
-                        _eventCalendar.Enqueue(new Event(bus, EventType.End), bus.EndTime);
-                        break;
-                    case EventType.End:
-                        // pridanie udalosti na zaciatok trasy
-                        _eventCalendar.Enqueue(new Event(bus, EventType.Start), bus.StartTime);
-                        break;
-                    default:
-                        throw new ArgumentException("Unknown event type");
-                }*/
+                    Event currentEvent = this._eventCalendar.Dequeue();
+                    currentEvent.Trigger();
+
+                    if (currentEvent is ArriveEvent)
+                    {
+                        this.PlanNextEvent((ArriveEvent)currentEvent);
+                    }
+                }
             }
         }
 
@@ -54,14 +50,94 @@ namespace MachilpebLibrary.Simulation
 
             foreach (var bus in buses)
             {
-                
+                bus.ChargeBattery();
 
+                var relocation = bus.GetDistanceFromDepo();
+                var lineSchedule = bus.GetNextLineSchedule();
 
-                _eventCalendar.Enqueue(new Event(bus), bus.StartTime);
+                if (lineSchedule == null) 
+                {
+                    throw new Exception("Line schedule not found");
+                }
+
+                if (relocation != null)
+                { 
+                    var relocationEvent = new RelocationEvent(bus, relocation.BusStop, lineSchedule.GetFirstBusStopSchedule().BusStop);
+                    this._eventCalendar.Enqueue(relocationEvent, relocation.Time);
+                }
+
+                var arriveEvent = new ArriveEvent(bus, lineSchedule.GetLastBusStopSchedule().BusStop, lineSchedule);
+
+                this._eventCalendar.Enqueue(arriveEvent, lineSchedule.GetEndTime());
             }
-
         }
 
+        // Ked autobus ukonci 
+        private void PlanNextEvent(ArriveEvent currentEvent)
+        {
+            var bus = currentEvent.Bus;
+            var lineSchedule = currentEvent.LineSchedule;
+
+            var nextLineSchedule = bus.GetNextLineSchedule(lineSchedule);
+
+            if (nextLineSchedule == null)
+            {
+                return;
+            }
+
+            var actualBusStop = lineSchedule.GetLastBusStopSchedule().BusStop;
+            var nextBusStop = nextLineSchedule.GetFirstBusStopSchedule().BusStop;
+
+            // riesenie presunu autobusu
+            if (actualBusStop.Equals(nextBusStop))
+            {
+                if (this._individual.GetChargingPoint(actualBusStop) > 0)
+                {
+                    var chargingEvent = new ChargingEvent(bus, actualBusStop, lineSchedule.GetEndTime(), nextLineSchedule.GetStartTime() - 1);
+                    this._eventCalendar.Enqueue(chargingEvent, nextLineSchedule.GetStartTime()-1);
+                }
+            }
+            else
+            {
+                var actualChargingPoint = this._individual.GetChargingPoint(actualBusStop);
+                var nextChargingPoint = this._individual.GetChargingPoint(nextBusStop);
+
+                if (actualChargingPoint > 0 || nextChargingPoint > 0)
+                {
+
+                    if (actualChargingPoint == 0)
+                    {
+                        var relocationEvent = new RelocationEvent(bus, actualBusStop, nextBusStop);
+                        this._eventCalendar.Enqueue(relocationEvent, lineSchedule.GetEndTime() + 1);
+                        var chargingEvent = new ChargingEvent(bus, nextBusStop, lineSchedule.GetEndTime() + 2, nextLineSchedule.GetStartTime() - 1);
+                        this._eventCalendar.Enqueue(chargingEvent, nextLineSchedule.GetStartTime() - 1);
+                    }
+                    else // if (nextChargingPoint == 0)
+                    {
+                        var chargingEvent = new ChargingEvent(bus, actualBusStop, lineSchedule.GetEndTime(), nextLineSchedule.GetStartTime() - 2);
+                        this._eventCalendar.Enqueue(chargingEvent, nextLineSchedule.GetStartTime() - 2);
+                        var relocationEvent = new RelocationEvent(bus, actualBusStop, nextBusStop);
+                        this._eventCalendar.Enqueue(relocationEvent, nextLineSchedule.GetStartTime() - 1);
+                    }
+                    //else
+                    //{
+                    //    // TODO 
+                    //    // vyriesit ako sa bude spravat ak su nabijacie body na oboch zastavkach
+                    //}
+                }
+                else 
+                {
+                    var relocationEvent = new RelocationEvent(bus, actualBusStop, nextBusStop);
+                    this._eventCalendar.Enqueue(relocationEvent, nextLineSchedule.GetStartTime() - 3);
+                }
+
+            }
+
+
+            var arriveEvent = new ArriveEvent(bus, nextLineSchedule.GetLastBusStopSchedule().BusStop, nextLineSchedule);
+            this._eventCalendar.Enqueue(arriveEvent, nextLineSchedule.GetEndTime());
+            
+        }
 
 
 

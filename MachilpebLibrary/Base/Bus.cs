@@ -49,7 +49,10 @@ namespace MachilpebLibrary.Base
             _schedules.Sort((x, y) => x.GetStartTime().CompareTo(y.GetStartTime()));
         }
 
-        private LineSchedule GetNextLineSchedule(LineSchedule? lineSchedule)
+        // metoda vracia nasledujuci harmonogram linky
+        // ak je parameter null tak vrati prvy harmonogram
+        // ak je parameter posledny harmonogram tak vrati null
+        public LineSchedule? GetNextLineSchedule(LineSchedule? lineSchedule = null)
         {
             if (lineSchedule == null)
             {
@@ -66,6 +69,26 @@ namespace MachilpebLibrary.Base
             return this._schedules[index + 1];
         }
 
+        public BusStopSchedule? GetDistanceFromDepo()
+        {
+            if (this.StartDepo!.Equals(GetFirstBusStopInSchedule()))
+            { 
+                return null;
+            }
+
+            return this.StartDepo;
+        }
+
+        public BusStopSchedule? GetDistanceToDepo()
+        {
+            if (this.EndDepo!.Equals(GetLastBusStopInSchedule()))
+            {
+                return null;
+            }
+
+            return this.EndDepo;
+        }
+
         public ImmutableList<LineSchedule> GetSchedules()
         {
             return _schedules.ToImmutableList();
@@ -78,26 +101,26 @@ namespace MachilpebLibrary.Base
 
         public BusStopSchedule GetFirstBusStopInSchedule()
         {
-            var bus = _schedules[0].FirstBusStopSchedule;
+            var busStopSchedule = _schedules[0]._firstBusStopSchedule;
 
-            if (bus == null)
+            if (busStopSchedule == null)
             {
                 throw new Exception("Last bus stop not set");
             }
 
-            return bus;
+            return busStopSchedule;
         }
 
         public BusStopSchedule GetLastBusStopInSchedule()
         {
-            var bus = _schedules[_schedules.Count - 1].LastBusStopSchedule;
+            var busStopSchedule = _schedules[_schedules.Count - 1]._lastBusStopSchedule;
 
-            if (bus == null)
+            if (busStopSchedule == null)
             {
                 throw new Exception("Last bus stop not set");
             }
 
-            return bus;
+            return busStopSchedule;
         }
 
         public void AddFirstBusStopInSchedule(BusStopSchedule busStopSchedule)
@@ -182,7 +205,7 @@ namespace MachilpebLibrary.Base
 
             foreach (var schedule in _schedules)
             {
-                var actual = schedule.FirstBusStopSchedule;
+                var actual = schedule._firstBusStopSchedule;
 
                 if (actual == null)
                 {
@@ -192,7 +215,7 @@ namespace MachilpebLibrary.Base
                 distance = prev.BusStop.GetDistance(actual.BusStop);
                 _distances.Add(distance);
 
-                prev = schedule.LastBusStopSchedule;
+                prev = schedule._lastBusStopSchedule;
 
                 if (prev == null)
                 {

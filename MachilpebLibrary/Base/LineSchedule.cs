@@ -18,8 +18,9 @@ namespace MachilpebLibrary.Base
         public int LineId { get; }
         public string Shift { get; }
         public List<DayOfWeek> Operates { get; private set; }
-        public BusStopSchedule? FirstBusStopSchedule { get; private set; }
-        public BusStopSchedule? LastBusStopSchedule { get; private set; }
+
+        public BusStopSchedule? _firstBusStopSchedule;
+        public BusStopSchedule? _lastBusStopSchedule;
 
         public LineSchedule(int id, int lineId, string shift, List<DayOfWeek> operates)
         {
@@ -31,48 +32,48 @@ namespace MachilpebLibrary.Base
 
         public void AddBusStopSchedule(BusStopSchedule busStopSchedule)
         {
-            if (FirstBusStopSchedule != null)
+            if (_firstBusStopSchedule != null)
             {
-                busStopSchedule.SetNext(FirstBusStopSchedule);
+                busStopSchedule.SetNext(_firstBusStopSchedule);
             }
 
-            FirstBusStopSchedule = busStopSchedule;
+            _firstBusStopSchedule = busStopSchedule;
         }
 
         public void AddLastBusStopSchedule(BusStopSchedule busStopSchedule)
         {
-            if (LastBusStopSchedule != null)
+            if (_lastBusStopSchedule != null)
             {
-                LastBusStopSchedule.SetNext(busStopSchedule);
+                _lastBusStopSchedule.SetNext(busStopSchedule);
             }
 
-            LastBusStopSchedule = busStopSchedule;
+            _lastBusStopSchedule = busStopSchedule;
+        }
+
+        public BusStopSchedule GetFirstBusStopSchedule()
+        {
+            return _firstBusStopSchedule ?? throw new Exception("First bus stop schedule not set!");
+        }
+
+        public BusStopSchedule GetLastBusStopSchedule()
+        {
+            return _lastBusStopSchedule ?? throw new Exception("Last bus stop schedule not set!");
         }
 
         public int GetStartTime()
         {
-            if (FirstBusStopSchedule == null)
-            {
-                throw new Exception("Bus stop schedules not set");
-            }
-
-            return FirstBusStopSchedule.Time;
+            return GetFirstBusStopSchedule().Time;
         }
 
         public int GetEndTime()
         {
-            if (LastBusStopSchedule == null)
-            {
-                throw new Exception("Bus stop schedules not set");
-            }
-
-            return LastBusStopSchedule.Time;
+            return GetLastBusStopSchedule().Time;
         }
 
         public int GetDistance()
         {
             int distance = 0;
-            var bss = FirstBusStopSchedule;
+            var bss = _firstBusStopSchedule;
 
             while (bss != null)
             {
@@ -100,8 +101,8 @@ namespace MachilpebLibrary.Base
             //}
 
             // skontroluje ci sa jedna o rovnaky casovy harmonogram
-            var thisbss = FirstBusStopSchedule;
-            var otherbss = other.FirstBusStopSchedule;
+            var thisbss = _firstBusStopSchedule;
+            var otherbss = other._firstBusStopSchedule;
 
             while (thisbss != null && otherbss != null)
             {
@@ -123,9 +124,9 @@ namespace MachilpebLibrary.Base
 
             sb.Append(Id + " line " + LineId + " shift: " + Shift + "\n");
 
-            if (FirstBusStopSchedule != null)
+            if (_firstBusStopSchedule != null)
             {
-                sb.Append("Bus stop schedules:\n" + FirstBusStopSchedule.ToString() + " \n");
+                sb.Append("Bus stop schedules:\n" + _firstBusStopSchedule.ToString() + " \n");
             }
 
             return sb.ToString();
@@ -133,7 +134,7 @@ namespace MachilpebLibrary.Base
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, LineId, Shift, Operates, FirstBusStopSchedule, LastBusStopSchedule);
+            return HashCode.Combine(Id, LineId, Shift, Operates, _firstBusStopSchedule, _lastBusStopSchedule);
         }
 
         public static LineSchedule ReadLineSchedule(string line)
