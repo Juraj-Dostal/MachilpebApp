@@ -12,33 +12,41 @@ namespace MachilpebLibrary.Simulation
     public class DiscreteEventSimulation
     {
 
+        string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\Log_Simulate.txt";
+
         private ImmutableList<Bus> _buses;
         // kalendar udalosti kde prirota je cas a element je udalost
-        private PriorityQueue<Event, int> _eventCalendar;
+        private readonly PriorityQueue<Event, int> _eventCalendar;
         private Individual _individual;
         
 
-        public DiscreteEventSimulation()
+        public DiscreteEventSimulation(Individual individual)
         {
             this._buses = DataReader.GetInstance().GetBuses();
             this._eventCalendar = new PriorityQueue<Event, int>();
-            this._individual = new Individual();
+            this._individual = individual;
         }
 
         public void simulate()
         {
-            foreach (Base.DayOfWeek day in Enum.GetValues(typeof(Base.DayOfWeek)))
+            using (var writer = File.CreateText(route))
             {
-                InitSimulate(day);
 
-                while (_eventCalendar.Count > 0)
+                foreach (Base.DayOfWeek day in Enum.GetValues(typeof(Base.DayOfWeek)))
                 {
-                    Event currentEvent = this._eventCalendar.Dequeue();
-                    currentEvent.Trigger();
+                    InitSimulate(day);
 
-                    if (currentEvent is ArriveEvent)
+                    while (_eventCalendar.Count > 0)
                     {
-                        this.PlanNextEvent((ArriveEvent)currentEvent);
+                        Event currentEvent = this._eventCalendar.Dequeue();
+                        currentEvent.Trigger();
+
+                        writer.Write(currentEvent.ToString());
+
+                        if (currentEvent is ArriveEvent)
+                        {
+                            this.PlanNextEvent((ArriveEvent)currentEvent);
+                        }
                     }
                 }
             }
@@ -62,12 +70,11 @@ namespace MachilpebLibrary.Simulation
 
                 if (relocation != null)
                 { 
-                    var relocationEvent = new RelocationEvent(bus, relocation.BusStop, lineSchedule.GetFirstBusStopSchedule().BusStop);
+                    var relocationEvent = new RelocationEvent(bus, relocation.BusStop, relocation.Time ,lineSchedule.GetFirstBusStopSchedule().BusStop);
                     this._eventCalendar.Enqueue(relocationEvent, relocation.Time);
                 }
 
-                var arriveEvent = new ArriveEvent(bus, lineSchedule.GetLastBusStopSchedule().BusStop, lineSchedule);
-
+                var arriveEvent = new ArriveEvent(bus, lineSchedule.GetLastBusStopSchedule().BusStop, lineSchedule.GetEndTime(), lineSchedule);
                 this._eventCalendar.Enqueue(arriveEvent, lineSchedule.GetEndTime());
             }
         }
@@ -80,44 +87,59 @@ namespace MachilpebLibrary.Simulation
 
             var nextLineSchedule = bus.GetNextLineSchedule(lineSchedule);
 
+            var actualBusStop = lineSchedule.GetLastBusStopSchedule().BusStop;
+            
+            // Koniec harmonagramu pre autobus presun do depa
             if (nextLineSchedule == null)
             {
+                if (actualBusStop.Equals(bus.GetEndDepo().BusStop))
+                {
+                    return;
+                }
+
+                var relocationEvent = new RelocationEvent(bus, actualBusStop, lineSchedule.GetEndTime() + 1,  bus.GetEndDepo().BusStop);
+                this._eventCalendar.Enqueue(relocationEvent, lineSchedule.GetEndTime() + 1);
                 return;
             }
-
-            var actualBusStop = lineSchedule.GetLastBusStopSchedule().BusStop;
+            
             var nextBusStop = nextLineSchedule.GetFirstBusStopSchedule().BusStop;
 
             // riesenie presunu autobusu
             if (actualBusStop.Equals(nextBusStop))
             {
-                if (this._individual.GetChargingPoint(actualBusStop) > 0)
+                if (this._individual.FreeChargingPoint(actualBusStop))
                 {
-                    var chargingEvent = new ChargingEvent(bus, actualBusStop, lineSchedule.GetEndTime(), nextLineSchedule.GetStartTime() - 1);
+                    var chargingEvent = new ChargingEvent(bus, actualBusStop, nextLineSchedule.GetStartTime() - 1, lineSchedule.GetEndTime(), nextLineSchedule.GetStartTime() - 1);
                     this._eventCalendar.Enqueue(chargingEvent, nextLineSchedule.GetStartTime()-1);
+
+                    this._individual.UseChargingPoint(actualBusStop);
                 }
             }
             else
             {
-                var actualChargingPoint = this._individual.GetChargingPoint(actualBusStop);
-                var nextChargingPoint = this._individual.GetChargingPoint(nextBusStop);
+                var actualChargingPoint = this._individual.IsChargingPointFree(actualBusStop);
+                var nextChargingPoint = this._individual.IsChargingPointFree(nextBusStop);
 
-                if (actualChargingPoint > 0 || nextChargingPoint > 0)
+                if (actualChargingPoint || nextChargingPoint)
                 {
 
-                    if (actualChargingPoint == 0)
+                    if (!actualChargingPoint)
                     {
-                        var relocationEvent = new RelocationEvent(bus, actualBusStop, nextBusStop);
+                        var relocationEvent = new RelocationEvent(bus, actualBusStop, lineSchedule.GetEndTime() + 1, nextBusStop);
                         this._eventCalendar.Enqueue(relocationEvent, lineSchedule.GetEndTime() + 1);
-                        var chargingEvent = new ChargingEvent(bus, nextBusStop, lineSchedule.GetEndTime() + 2, nextLineSchedule.GetStartTime() - 1);
+                        var chargingEvent = new ChargingEvent(bus, nextBusStop, nextLineSchedule.GetStartTime() - 1, lineSchedule.GetEndTime() + 2, nextLineSchedule.GetStartTime() - 1);
                         this._eventCalendar.Enqueue(chargingEvent, nextLineSchedule.GetStartTime() - 1);
+
+                        this._individual.UseChargingPoint(nextBusStop);
                     }
                     else // if (nextChargingPoint == 0)
                     {
-                        var chargingEvent = new ChargingEvent(bus, actualBusStop, lineSchedule.GetEndTime(), nextLineSchedule.GetStartTime() - 2);
+                        var chargingEvent = new ChargingEvent(bus, actualBusStop, nextLineSchedule.GetStartTime() - 2, lineSchedule.GetEndTime(), nextLineSchedule.GetStartTime() - 2);
                         this._eventCalendar.Enqueue(chargingEvent, nextLineSchedule.GetStartTime() - 2);
-                        var relocationEvent = new RelocationEvent(bus, actualBusStop, nextBusStop);
+                        var relocationEvent = new RelocationEvent(bus, actualBusStop, nextLineSchedule.GetStartTime() - 1, nextBusStop);
                         this._eventCalendar.Enqueue(relocationEvent, nextLineSchedule.GetStartTime() - 1);
+
+                        this._individual.UseChargingPoint(actualBusStop);
                     }
                     //else
                     //{
@@ -127,20 +149,15 @@ namespace MachilpebLibrary.Simulation
                 }
                 else 
                 {
-                    var relocationEvent = new RelocationEvent(bus, actualBusStop, nextBusStop);
+                    var relocationEvent = new RelocationEvent(bus, actualBusStop, nextLineSchedule.GetStartTime() - 3, nextBusStop);
                     this._eventCalendar.Enqueue(relocationEvent, nextLineSchedule.GetStartTime() - 3);
                 }
 
             }
 
-
-            var arriveEvent = new ArriveEvent(bus, nextLineSchedule.GetLastBusStopSchedule().BusStop, nextLineSchedule);
+            var arriveEvent = new ArriveEvent(bus, nextLineSchedule.GetLastBusStopSchedule().BusStop, nextLineSchedule.GetEndTime(), nextLineSchedule);
             this._eventCalendar.Enqueue(arriveEvent, nextLineSchedule.GetEndTime());
-            
         }
-
-
-
 
     }
 }

@@ -29,7 +29,7 @@ namespace MachilpebLibrary.Base
         { 
             if (Next == null)
             {
-                throw new Exception("Next not set");
+                return 0;
             }
 
             return BusStop.GetDistance(Next.BusStop);

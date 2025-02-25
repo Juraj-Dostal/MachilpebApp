@@ -14,9 +14,9 @@ namespace MachilpebLibrary.Base
         // identifikacia busu
         public int Id { get; private set; }
         public DayOfWeek Day { get; private set; }
-        
-        public BusStopSchedule? StartDepo { get; private set; }
-        public BusStopSchedule? EndDepo { get; private set; }
+
+        public BusStopSchedule? _startDepo;
+        public BusStopSchedule? _endDepo;
 
         private readonly List<int> _distances; // vzdialenosti medzi presunom na nasledujucu LineSchedule
         private readonly List<string> _shift;
@@ -59,34 +59,52 @@ namespace MachilpebLibrary.Base
                 return _schedules.First();
             }
 
-            var index = _schedules.IndexOf(lineSchedule);
+            var index = _schedules.IndexOf(lineSchedule) + 1;
 
             if (index == _schedules.Count)
             {
                 return null;
             }
 
-            return this._schedules[index + 1];
+            return this._schedules[index];
         }
 
         public BusStopSchedule? GetDistanceFromDepo()
         {
-            if (this.StartDepo!.Equals(GetFirstBusStopInSchedule()))
+            if (this.GetStartDepo().Equals(GetFirstBusStopInSchedule()))
             { 
                 return null;
             }
 
-            return this.StartDepo;
+            return this._startDepo;
         }
 
         public BusStopSchedule? GetDistanceToDepo()
         {
-            if (this.EndDepo!.Equals(GetLastBusStopInSchedule()))
+            if (this.GetEndDepo().Equals(GetLastBusStopInSchedule()))
             {
                 return null;
             }
 
-            return this.EndDepo;
+            return this._endDepo;
+        }
+
+        public BusStopSchedule GetStartDepo()
+        {
+            if (this._startDepo == null)
+            {
+                throw new Exception("Start depo not set");
+            }
+            return this._startDepo;
+        }
+
+        public BusStopSchedule GetEndDepo()
+        {
+            if (this._endDepo == null)
+            {
+                throw new Exception("End depo not set");
+            }
+            return this._endDepo;
         }
 
         public ImmutableList<LineSchedule> GetSchedules()
@@ -162,7 +180,7 @@ namespace MachilpebLibrary.Base
 
         public void SetDepo(BusStop busStop)
         {
-            if (StartDepo != null || EndDepo != null)
+            if (_startDepo != null || _endDepo != null)
             {
                 throw new Exception("Start or end already set");
             }
@@ -172,20 +190,20 @@ namespace MachilpebLibrary.Base
 
             if (first.BusStop.Id == busStop.Id)
             {
-                StartDepo = first;
+                _startDepo = first;
             }
             else
             {
-                StartDepo = new BusStopSchedule(0, busStop, first.Time - 10);
+                _startDepo = new BusStopSchedule(0, busStop, first.Time - 10);
             }
 
             if (last.BusStop.Id == busStop.Id)
             {
-                EndDepo = last;
+                _endDepo = last;
             }
             else
             {
-                EndDepo = new BusStopSchedule(0, busStop, last.Time + 10);
+                _endDepo = new BusStopSchedule(0, busStop, last.Time + 10);
             }
 
         }
@@ -194,14 +212,9 @@ namespace MachilpebLibrary.Base
         {
 
             // Ak startovacie depo je rovnako ako zacina autobus tak da 0
-            var prev = StartDepo;
+            var prev = this.GetStartDepo();
 
-            if (prev == null)
-            {
-                throw new Exception("Start depo not set");
-            }
-
-            int distance = 0;
+            int distance;
 
             foreach (var schedule in _schedules)
             {
@@ -223,12 +236,7 @@ namespace MachilpebLibrary.Base
                 }
             }
 
-            var last = EndDepo;
-
-            if (last == null)
-            {
-                throw new Exception("End depo not set");
-            }
+            var last = this.GetEndDepo();
 
             distance = prev.BusStop.GetDistance(last.BusStop);
             _distances.Add(distance);
@@ -280,41 +288,38 @@ namespace MachilpebLibrary.Base
 
         public override string? ToString()
         {
-            var sb = new StringBuilder();
+            //var sb = new StringBuilder();
 
-            sb.Append(Id + ". bus on " + Day.ToString() + " shift: ");
+            //sb.Append(Id + ". bus on " + Day.ToString() + " shift: ");
 
-            foreach (var shift in _shift)
-            {
-                sb.Append(shift + " ");
-            }
+            //foreach (var shift in _shift)
+            //{
+            //    sb.Append(shift + " ");
+            //}
 
-            sb.Append("\nSchedules:\n");
+            //sb.Append("\nSchedules:\n");
 
-            if (StartDepo == null || EndDepo == null)
-            {
-                throw new Exception("Depo not set");
-            }
+            //sb.Append(this.GetStartDepo().ToString() + "\n");
 
-            sb.Append(StartDepo.ToString() + "\n");
+            //foreach (var schedule in _schedules)
+            //{
+            //    sb.Append(schedule.ToString());
+            //}
 
-            foreach (var schedule in _schedules)
-            {
-                sb.Append(schedule.ToString());
-            }
+            //sb.Append(this.GetEndDepo().ToString() + "\n");
 
-            sb.Append(EndDepo.ToString() + "\n");
+            //sb.Append("Distance: ");
 
-            sb.Append("Distance: ");
+            //foreach (var distance in _distances)
+            //{
+            //    sb.Append(distance + " ");
+            //}
 
-            foreach (var distance in _distances)
-            {
-                sb.Append(distance + " ");
-            }
+            //sb.Append("\n");
 
-            sb.Append("\n");
+            //return sb.ToString();
 
-            return sb.ToString();
+            return Id + ". bus on " + Day.ToString() + " battery: " + _battery;
         }
 
         public static Bus ReadBus(string line)

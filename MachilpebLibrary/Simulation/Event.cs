@@ -26,28 +26,38 @@ namespace MachilpebLibrary.Simulation
     {
         public Bus Bus { get; }
         public BusStop BusStop { get; }
+        public int Priority { get; }
+    
 
-        public Event(Bus bus, BusStop busStop)
+        public Event(Bus bus, BusStop busStop, int priority)
         {
-            Bus = bus;
-            BusStop = busStop;
+            this.Bus = bus;
+            this.BusStop = busStop;
+            this.Priority = priority;
         }
 
         public abstract void Trigger();
+
+        public abstract override string? ToString();
     }
 
     public class ArriveEvent : Event
     {
         public LineSchedule LineSchedule { get; }
 
-        public ArriveEvent(Bus bus, BusStop busStop, LineSchedule lineSchedule) : base(bus, busStop)
+        public ArriveEvent(Bus bus, BusStop busStop, int priority, LineSchedule lineSchedule) : base(bus, busStop, priority)
         {
-            LineSchedule = lineSchedule;
+            this.LineSchedule = lineSchedule;
         }
 
         public override void Trigger()
         {
-            Bus.ConsumeBattery(LineSchedule.GetDistance());
+            this.Bus.ConsumeBattery(this.LineSchedule.GetDistance());
+        }
+
+        public override string? ToString()
+        {
+            return this.Priority + " | ArriveEvent: " + this.Bus.ToString() + " BusStop: " + this.BusStop.Name + "\n";
         }
     }
 
@@ -56,15 +66,20 @@ namespace MachilpebLibrary.Simulation
         public int StartTime { get; }
         public int EndTime { get; set; }
 
-        public ChargingEvent(Bus bus, BusStop busStop, int startTime, int EndTime ) : base(bus, busStop)
+        public ChargingEvent(Bus bus, BusStop busStop, int priority, int startTime, int endTime ) : base(bus, busStop, priority)
         {
             this.StartTime = startTime;
-            this.EndTime = EndTime;
+            this.EndTime = endTime;
         }
 
         public override void Trigger()
         {
-            Bus.ChargeBattery(this.EndTime - this.StartTime);
+            this.Bus.ChargeBattery(this.EndTime - this.StartTime);
+        }
+
+        public override string? ToString()
+        {
+            return this.Priority + " | ChargingEvent " + this.Bus.ToString() + " BusStop: " + this.BusStop.Name + "Time" + this.StartTime + "-" + this.EndTime + "\n";
         }
     }
 
@@ -72,14 +87,19 @@ namespace MachilpebLibrary.Simulation
     {
         public BusStop Destination { get; }
 
-        public RelocationEvent(Bus bus, BusStop busStop, BusStop destination) : base(bus, busStop)
+        public RelocationEvent(Bus bus, BusStop busStop, int priority, BusStop destination) : base(bus, busStop, priority)
         {
-            Destination = destination;
+            this.Destination = destination;
         }
 
         public override void Trigger()
         {
-            Bus.ConsumeBattery(BusStop.GetDistance(Destination));
+            this.Bus.ConsumeBattery(this.BusStop.GetDistance(this.Destination));
+        }
+
+        public override string? ToString()
+        {
+            return this.Priority + " | RelocationEvent: " + this.Bus.ToString() + " BusStop: " + this.BusStop.Name + " Destination: " + this.Destination.Name + "\n";
         }
     }
 }

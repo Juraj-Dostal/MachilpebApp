@@ -1,4 +1,6 @@
-﻿using MachilpebLibrary.Base;
+﻿using MachilpebLibrary.Algorithm;
+using MachilpebLibrary.Base;
+using MachilpebLibrary.Simulation;
 
 namespace MachilpebConsole
 {
@@ -6,11 +8,17 @@ namespace MachilpebConsole
     {
         static void Main(string[] args)
         {
+            Bus.BATTERY_CHARGING = 1.5;
+            Bus.BATTERY_CONSUMPTION = 0.8;
+            Bus.BATTERY_CAPACITY = 140;
 
             DataReader dataReader = DataReader.GetInstance();
 
-            // vystup do suboru
-            File.WriteAllText("C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\outputV2.txt", dataReader.GetStatus());
+            Individual individual = new Individual();
+
+            DiscreteEventSimulation simulation = new DiscreteEventSimulation(individual);
+
+            simulation.simulate();
 
         }
     }
