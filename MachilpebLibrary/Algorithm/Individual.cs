@@ -111,11 +111,20 @@ namespace MachilpebLibrary.Algorithm
         {
             var rnd = new Random();
 
-            for (int i = 0; i < this._chargingPoint.Length; i++)
+            for (int i = 0; i < 20;)
             {
-                this._chargingPoint[i].Item2 = rnd.Next(0, 3);
+                var bs = rnd.Next(0, this._chargingPoint.Length);
 
-                File.AppendAllText(route, this._chargingPoint[i].Item1.Id + " " + this._chargingPoint[i].Item1.Name + " " + this._chargingPoint[i].Item2 + "\n");
+                if (this._chargingPoint[bs].Item2 != 0)
+                {
+                    continue;
+                }
+
+                this._chargingPoint[bs].Item2 = rnd.Next(1, 3);
+
+                i++;
+
+                File.AppendAllText(route, this._chargingPoint[bs].Item1.Id + " " + this._chargingPoint[bs].Item1.Name + " " + this._chargingPoint[bs].Item2 + "\n");
             }
         }
 

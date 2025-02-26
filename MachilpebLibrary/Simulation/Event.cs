@@ -1,4 +1,5 @@
-﻿using MachilpebLibrary.Base;
+﻿using MachilpebLibrary.Algorithm;
+using MachilpebLibrary.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,18 +64,22 @@ namespace MachilpebLibrary.Simulation
 
     public class ChargingEvent : Event
     {
+        private Individual _individual;
+
         public int StartTime { get; }
         public int EndTime { get; set; }
 
-        public ChargingEvent(Bus bus, BusStop busStop, int priority, int startTime, int endTime ) : base(bus, busStop, priority)
+        public ChargingEvent(Bus bus, BusStop busStop, Individual individual , int priority, int startTime, int endTime ) : base(bus, busStop, priority)
         {
             this.StartTime = startTime;
             this.EndTime = endTime;
+            this._individual = individual;
         }
 
         public override void Trigger()
         {
             this.Bus.ChargeBattery(this.EndTime - this.StartTime);
+            this._individual.FreeChargingPoint(this.BusStop);
         }
 
         public override string? ToString()
