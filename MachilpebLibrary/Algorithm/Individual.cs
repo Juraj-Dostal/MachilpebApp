@@ -16,7 +16,10 @@ namespace MachilpebLibrary.Algorithm
         private (BusStop, int)[] _chargingPoint;
         private (BusStop, int)[] _usedChargingPoint;
 
-        public Individual()
+        // atribute potrebne pre algoritmus
+
+
+        private Individual()
         {
             var busStop = DataReader.GetInstance().GetBusStop();
 
@@ -30,7 +33,20 @@ namespace MachilpebLibrary.Algorithm
             }
 
             // inicializacia nabijacich bodov !!Docasne
-            this.InitChargingPoint();
+            // this.InitChargingPoint();
+        }
+
+        public Individual(Individual individual)
+        {
+
+            this._chargingPoint = new (BusStop, int)[individual._chargingPoint.Length];
+            this._usedChargingPoint = new (BusStop, int)[individual._chargingPoint.Length];
+
+            for (int i = 0; i < individual._chargingPoint.Length; i++)
+            {
+                this._chargingPoint[i] = (individual._chargingPoint[i].Item1, individual._chargingPoint[i].Item2);
+                this._usedChargingPoint[i] = (individual._usedChargingPoint[i].Item1, 0);
+            }
         }
 
         public Individual((BusStop, int)[] chargingPoint)
@@ -126,6 +142,15 @@ namespace MachilpebLibrary.Algorithm
 
                 File.AppendAllText(route, this._chargingPoint[bs].Item1.Id + " " + this._chargingPoint[bs].Item1.Name + " " + this._chargingPoint[bs].Item2 + "\n");
             }
+        }
+
+        public static Individual GenerateIndividual()
+        { 
+            var individual = new Individual();
+
+            individual.InitChargingPoint();
+
+            return individual;
         }
 
     }

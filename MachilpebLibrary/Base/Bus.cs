@@ -10,6 +10,7 @@ namespace MachilpebLibrary.Base
         public static double BATTERY_CAPACITY { get; set; } // kWh
         public static double BATTERY_CONSUMPTION { get; set; } // kWh/km
         public static double BATTERY_CHARGING { get; set; } // kWh/min
+        public static double RELOCATION_SPEED = 40; // km/h priemerna ryclost na presun autobusu
 
         // identifikacia busu
         public int Id { get; private set; }
@@ -332,6 +333,10 @@ namespace MachilpebLibrary.Base
             return new Bus(id, shift, day);
         }
 
+        public static int GetRelocationTime(int relocationDistance)
+        {
+            return (int)Math.Round(relocationDistance * RELOCATION_SPEED * 1000 / 60); 
+        }
 
         private static DayOfWeek getDay(string date)
         {
@@ -356,8 +361,8 @@ namespace MachilpebLibrary.Base
             }
 
             throw new Exception("Invalid day");
-
         }
+
     }
 
     public enum DayOfWeek

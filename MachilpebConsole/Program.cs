@@ -14,7 +14,7 @@ namespace MachilpebConsole
 
             DataReader dataReader = DataReader.GetInstance();
 
-            Individual individual = new Individual();
+            Individual individual = Individual.GenerateIndividual();
 
             DiscreteEventSimulation simulation = new DiscreteEventSimulation(individual);
 
