@@ -10,6 +10,10 @@ namespace MachilpebLibrary.Algorithm
 {
     public class Individual
     {
+        // Konstanta
+        public static int PRICE_CHARGING_STATION { get; set; }
+        public static int PRICE_CHARGING_POINT { get; set; }
+
         string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\Log_Simulate_Individual.txt";
 
         // vektor nabijacich bodov (zastavka, pocet nabijajucich bodov)
@@ -17,6 +21,8 @@ namespace MachilpebLibrary.Algorithm
         private (BusStop, int)[] _usedChargingPoint;
 
         // atribute potrebne pre algoritmus
+
+        
 
 
         private Individual()
@@ -61,6 +67,21 @@ namespace MachilpebLibrary.Algorithm
             {
                 this._usedChargingPoint[i] = (chargingPoint[i].Item1, 0);
             }
+        }
+
+        public int GetFitness()
+        {
+
+
+            return 0;
+        }
+
+        public int GetObjectiveFun()
+        {
+            var price = 0;
+            
+
+            return 0; 
         }
 
         public int GetChargingPoint(BusStop busStop)
