@@ -13,6 +13,8 @@ namespace MachilpebLibrary.Algorithm
         // Konstanta
         public static int PRICE_CHARGING_STATION { get; set; }
         public static int PRICE_CHARGING_POINT { get; set; }
+        public static int PRICE_PENALTY = 250000;
+
 
         string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\Log_Simulate_Individual.txt";
 
@@ -21,9 +23,7 @@ namespace MachilpebLibrary.Algorithm
         private (BusStop, int)[] _usedChargingPoint;
 
         // atribute potrebne pre algoritmus
-
-        
-
+        private int _cancelled = 0; // pocet neuskutocnenych turnusov
 
         private Individual()
         {
@@ -69,9 +69,11 @@ namespace MachilpebLibrary.Algorithm
             }
         }
 
-        public int GetFitness()
+        public int GetFitnessFun()
         {
+            var price = this.GetObjectiveFun();
 
+            price += this._cancelled * PRICE_PENALTY;
 
             return 0;
         }
@@ -79,7 +81,11 @@ namespace MachilpebLibrary.Algorithm
         public int GetObjectiveFun()
         {
             var price = 0;
-            
+
+            for (int i = 0; i < this._chargingPoint.Length; i++)
+            {
+                price += PRICE_CHARGING_STATION + this._chargingPoint[i].Item2 * PRICE_CHARGING_POINT;
+            }
 
             return 0; 
         }

@@ -54,18 +54,17 @@ namespace MachilpebLibrary.Algorithm
          * Vyuziva ku tomu metodu GenerateRandomConfiguration a LocalSearch
          * 
          */
-        private Population GenerateInitialPop()
+        private void GenerateInitialPop()
         {
-            Population currentPop;
-            for (int i = 0; i < currentPop.Size; i++)
+            //Population currentPop;
+            for (int i = 0; i < Population.INDIVIDUAL_COUNT; i++)
             {
-                var pop = Individual.GenerateIndividual();
-                pop = LocalSearch(pop);
-                currentPop.setIndividual(i, pop);
+                var individual = Individual.GenerateIndividual();
+                individual = LocalSearch(individual);
+                _population.AddIndividual(individual);
             }
 
             //return currentPop;
-            return null;
         }
 
         /*
@@ -140,7 +139,7 @@ namespace MachilpebLibrary.Algorithm
             {
                 var newIndividual = this.GenerateNeighbour(actualIndividual);
 
-                if (actualIndividual.Fitness > newIndividual.Fitness)
+                if (actualIndividual.GetFitnessFun() > newIndividual.GetFitnessFun())
                 {
                     actualIndividual = newIndividual;
                     i = -1;
@@ -149,14 +148,10 @@ namespace MachilpebLibrary.Algorithm
 
             return actualIndividual;
 
-            /*
-             * TODO LocalSearch
-             * 1. Doriesit podmienku while skoncenia 'TerminationCriterion'
-             * 2. Doriesit GenerateNeighbour ako sa bude vytvarat
-             * 3. Doriesit podmienku if ako porovnavat 
-             */
+            
         }
 
+        // TODO: Implement this method
         private Individual GenerateNeighbour(object currentPop)
         {
             throw new NotImplementedException();
