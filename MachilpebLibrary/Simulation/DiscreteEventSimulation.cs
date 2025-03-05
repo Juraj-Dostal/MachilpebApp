@@ -129,7 +129,8 @@ namespace MachilpebLibrary.Simulation
             }
             else
             {
-                int relocationTime = Bus.GetRelocationTime(actualBusStop.GetDistance(nextBusStop));
+                var relocationDistance = actualBusStop.GetDistance(nextBusStop);
+                int relocationTime = Bus.GetRelocationTime(/*actualBusStop.GetDistance(nextBusStop)*/ relocationDistance);
 
                 var actualChargingPoint = this._individual.IsChargingPointFree(actualBusStop);
                 var nextChargingPoint = this._individual.IsChargingPointFree(nextBusStop);

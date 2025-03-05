@@ -1,13 +1,8 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
+
 namespace MachilpebLibrary.Algorithm
 {
     
-
-    /*
-     * Skratky:
-     *      pop = population
-     *
-     */
     public class MemeticAlgorithm
     {
         //Konstanta
@@ -16,10 +11,15 @@ namespace MachilpebLibrary.Algorithm
         public static int PICKED_COUNT { get; set; } // best picked 
 
         public static int LOCAL_SEARCH_ITERATION { get; set; }
+        public static int PARENTS_COUNT { get; set; } // pocet rodicov
 
-        public static int Nop = 100; // pocet populacii novych
+        //Operatos
+        public static int PROBABILITY_MUTATION { get; set; } // velmi male
+
+        public static double PRESERVE { get; set; } // od <0,1> percento jedincov ktorych si nechame pri restarte
 
         private Population _population;
+        private Random random = new Random();
 
         public MemeticAlgorithm(Population population)
         {
@@ -34,70 +34,124 @@ namespace MachilpebLibrary.Algorithm
          */
         public void MemeticSearch()
         {
-            Population currentPop = GenerateInitialPop();
+            GenerateInitialPop();
             do
             {
-                Population newPop = GenarateNewPop(currentPop);
-                currentPop = UpdatePop(currentPop, newPop);
-                if (condition) // podmienka ak populacia skonvergovala
+                var pop = this.GenerateNextPopulation();
+                this._population = pop;
+                if (/*condition*/ true) // podmienka pre skonvergovanie nezlepsenie fitness funkcie
                 {
-                    RestartPop(currentPop);
+                    this.RestartPopulation();
                 }
-            } while (condition);
+            } while (/*condition*/ true); // podmienka 1.pocet iteracii, 2. pocet restartov 
+
         }
 
         /*
          * Generate initial population
          * 
          * Metoda sluzi na vygenerovanie zaciatocnej populacie
-         * 
-         * Vyuziva ku tomu metodu GenerateRandomConfiguration a LocalSearch
-         * 
+         *  
          */
         private void GenerateInitialPop()
         {
-            //Population currentPop;
             for (int i = 0; i < Population.INDIVIDUAL_COUNT; i++)
             {
                 var individual = Individual.GenerateIndividual();
-                individual = LocalSearch(individual);
-                _population.AddIndividual(individual);
+                individual = this.LocalSearch(individual);
+                this._population.AddIndividual(individual);
             }
 
-            //return currentPop;
         }
 
         /*
          * Generate new population
          * 
-         * Metoda sluzi na vygenerovanie novej populacie
+         * Metoda sluzi na vygenerovanie novej dalsej populacie
          * Na ktoru sa zoberu rodicia a vytvoria sa deti
          * aplikuju sa operatory
          *      OPERATORY: Selection, Recombination, Mutation, LocalSearch
          * 
          */
 
-        private Population[] GenarateNewPop(Population pCurrentPop)
+        private Population GenerateNextPopulation()
         {
-            Population[Nop] pops;
-            pops[0] = pCurrentPop;
-            for (int i = 1; i < Nop; i++)
+            var newPop = new Population(this._population);
+            
+            var parent = Selection();
+            var children = Crossover(parent);
+
+            newPop.AddIndividual(parent[0]);
+
+
+            for (int i = 0; i < Population.INDIVIDUAL_COUNT - 1; i++)
             {
-                pops[i] = new Population;
+                var child = this.Mutation(children[i]);
+                child = this.LocalSearch(child);
+                newPop.AddIndividual(child);
             }
 
-            for (int i = 0; i < Nop; i++)
+            return newPop;
+        }
+
+
+        // TODO: Check implemention this method
+        private Individual[] Selection()
+        {
+            var individuals = new Individual[PARENTS_COUNT];
+            for (int i = 0; i < PICKED_COUNT; i++)
             {
-                Sparent[i] = ExtractFromBuffer(buffer[i - 1], ARITYin[i])
-                 Schild[i] = ApplyOperator(op[i], Sparent[i])
-                 for (int j = 0; j < ARITYout[i]; i++)
-                {
-                    pops[j].setIndividual(Schild[j])
-                 }
+                individuals[i] = this._population.ExtractBest(i);
             }
 
-            return pops;
-            return null;
+            return individuals;
+        }
+
+        // TODO: Check implementation this method
+        private Individual[] Crossover(Individual[] parents)
+        {
+            var individuals = new Individual[PARENTS_COUNT];
+            var maskSize = parents[0].GetBusStopCount();
+
+            for (int i = 0; i < Population.INDIVIDUAL_COUNT; i++)
+            {
+                var mask = this.GenerateMask(maskSize);
+
+                var firstParent = this.random.Next(0, PARENTS_COUNT);
+                int secondParent;
+
+                do {
+                    secondParent = this.random.Next(0, PARENTS_COUNT);
+                } while (firstParent == secondParent);
+                
+                individuals[i] = new Individual(parents[firstParent], parents[secondParent], mask);
+            }
+
+            return individuals;
+        }
+
+        private bool[] GenerateMask(int size)
+        {
+            var mask = new bool[size];
+
+            for (int i = 0; i < mask.Length; i++)
+            {
+                mask[i] = this.random.NextDouble() < 0.5;
+            }
+
+            return mask;
+        }
+
+        // TODO: Implement this method
+        private Individual Mutation(Individual individual)
+        {
+            if (this.random.NextDouble() < PROBABILITY_MUTATION) 
+            {
+            
+            }
+
+            return individual;
+
         }
 
         /*
@@ -107,23 +161,25 @@ namespace MachilpebLibrary.Algorithm
          * pokial skonvergovala
          * 
          */
-        private Population RestartPop(Population pCurrentPop)
+        private Population RestartPopulation()
         {
-            Population newPop;
-            int preserved = pCurrentPop.size() * preserve;
+            var newPop = new Population();
+
+            var preserved = (int) Math.Round( Population.INDIVIDUAL_COUNT * PRESERVE);
+
             for (int i = 0; i < preserved; i++)
             {
-                individual = pCurrentPop.ExtractBest(i);
-                newPop.setIndividual(individual, newPop);
+                var individual = this._population.ExtractBest(i);
+                newPop.AddIndividual(individual);
             }
-            for (int i = preserved; i < pCurrentPop.size(); i++)
+            for (int i = preserved; i < Population.INDIVIDUAL_COUNT; i++)
             {
-                individual = GenerateRandomConfiguration();
-                individual = LocalSearch(individual);
-                newPop.setIndividual(individual, newPop);
+                var individual = Individual.GenerateIndividual();
+                individual = this.LocalSearch(individual);
+                newPop.AddIndividual(individual);
             }
+
             return newPop;
-            return null;
         }
 
         /*

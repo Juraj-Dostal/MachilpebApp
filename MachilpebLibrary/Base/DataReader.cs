@@ -135,6 +135,8 @@ namespace MachilpebLibrary.Base
             {
                 bus.IsBusScheduleWell();
             }
+
+            BusStop.SetFinalBusStops(this._lineSchedulesList);
         }
 
 

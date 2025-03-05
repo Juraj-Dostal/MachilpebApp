@@ -27,7 +27,7 @@ namespace MachilpebLibrary.Algorithm
 
         private Individual()
         {
-            var busStop = DataReader.GetInstance().GetBusStop();
+            var busStop = BusStop.FINAL_BUSSTOPS;
 
             this._chargingPoint = new (BusStop, int)[busStop.Count];
             this._usedChargingPoint = new (BusStop, int)[busStop.Count];
@@ -69,6 +69,28 @@ namespace MachilpebLibrary.Algorithm
             }
         }
 
+        public Individual(Individual firstParent, Individual secondParent, bool[] mask)
+        {
+            this._chargingPoint = new (BusStop, int)[firstParent._chargingPoint.Length];
+            this._usedChargingPoint = new (BusStop, int)[firstParent._chargingPoint.Length];
+
+            for (int i = 0; i < firstParent._chargingPoint.Length; i++)
+            {
+                if (mask[i])
+                {
+                    this._chargingPoint[i] = (firstParent._chargingPoint[i].Item1, firstParent._chargingPoint[i].Item2);
+                }
+                else
+                {
+                    this._chargingPoint[i] = (secondParent._chargingPoint[i].Item1, secondParent._chargingPoint[i].Item2);
+                }
+
+                this._usedChargingPoint[i] = (firstParent._chargingPoint[i].Item1, 0);
+            }
+
+
+        }
+
         public int GetFitnessFun()
         {
             var price = this.GetObjectiveFun();
@@ -88,6 +110,11 @@ namespace MachilpebLibrary.Algorithm
             }
 
             return 0; 
+        }
+
+        public int GetBusStopCount()
+        {
+            return this._chargingPoint.Length;
         }
 
         public int GetChargingPoint(BusStop busStop)
@@ -137,6 +164,7 @@ namespace MachilpebLibrary.Algorithm
             }
         }
 
+
         private int FindBusStop(BusStop busStop)
         {
             for (int i = 0; i < this._chargingPoint.Length; i++)
@@ -180,5 +208,9 @@ namespace MachilpebLibrary.Algorithm
             return individual;
         }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is Individual individual && EqualityComparer<(BusStop, int)[]>.Default.Equals(_chargingPoint, individual._chargingPoint);
+        }
     }
 }

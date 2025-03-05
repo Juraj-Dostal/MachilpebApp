@@ -335,7 +335,7 @@ namespace MachilpebLibrary.Base
 
         public static int GetRelocationTime(int relocationDistance)
         {
-            return (int)Math.Round(relocationDistance * RELOCATION_SPEED * 1000 / 60); 
+            return (int)Math.Round(relocationDistance / RELOCATION_SPEED * 1000 / 60); 
         }
 
         private static DayOfWeek getDay(string date)

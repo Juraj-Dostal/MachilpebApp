@@ -18,6 +18,15 @@ namespace MachilpebLibrary.Algorithm
             this._population = new Individual[INDIVIDUAL_COUNT];
         }
 
+        public Population(Population population)
+        {
+            this._population = new Individual[INDIVIDUAL_COUNT];
+            for (int i = 0; i < population._population.Length; i++)
+            {
+                this._population[i] = new Individual(population._population[i]);
+            }
+        }
+
         public void AddIndividual(Individual individual)
         { 
             for (int i = 0; i < this._population.Length; i++) 
@@ -29,11 +38,14 @@ namespace MachilpebLibrary.Algorithm
 
                 this._population[i] = individual;
             }
-
         }
 
+        //TODO: Implement this method
+        internal Individual ExtractBest(int i)
+        {
+            var sorted = this._population.OrderBy(individual => individual.GetFitnessFun()).ToArray();
 
-
-
+            return sorted[i];
+        }
     }
 }

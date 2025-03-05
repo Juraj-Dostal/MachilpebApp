@@ -18,6 +18,7 @@ namespace MachilpebLibrary.Base
 
     public class BusStop
     {
+        public static List<BusStop> FINAL_BUSSTOPS { get; set; }
 
         public int Id { get; }
         public string Name { get; }
@@ -68,5 +69,25 @@ namespace MachilpebLibrary.Base
             return new BusStop(id, name, latitude, longitude);
         }
 
+        public static void SetFinalBusStops(List<LineSchedule> lineSchedules)
+        {
+            FINAL_BUSSTOPS = new List<BusStop>();
+            foreach (var lineSchedule in lineSchedules)
+            {
+                var firstBusStop = lineSchedule.GetFirstBusStopSchedule().BusStop;
+                var lastBusStop = lineSchedule.GetLastBusStopSchedule().BusStop;
+
+                if (!FINAL_BUSSTOPS.Contains(firstBusStop))
+                {
+                    FINAL_BUSSTOPS.Add(firstBusStop);
+                }
+                else if (!FINAL_BUSSTOPS.Contains(lastBusStop))
+                {
+                    FINAL_BUSSTOPS.Add(lastBusStop);
+                }
+
+            }
+
+        }
     }
 }
