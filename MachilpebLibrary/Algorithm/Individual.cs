@@ -11,8 +11,8 @@ namespace MachilpebLibrary.Algorithm
     public class Individual
     {
         // Konstanta
-        public static int PRICE_CHARGING_STATION { get; set; }
-        public static int PRICE_CHARGING_POINT { get; set; }
+        public static int PRICE_CHARGING_STATION = 50000; // €
+        public static int PRICE_CHARGING_POINT = 2500; // €
         public static int PRICE_PENALTY = 250000;
 
 

@@ -15,11 +15,12 @@ namespace MachilpebLibrary.Algorithm
 
         //Operatos
         public static int PROBABILITY_MUTATION { get; set; } // velmi male
+        public static int PROBABILITY_LOCAL_SEARCH { get; set; } // 0 - geneticky a 1 - vzdy sa vykona
 
         public static double PRESERVE { get; set; } // od <0,1> percento jedincov ktorych si nechame pri restarte
 
         private Population _population;
-        private Random random = new Random();
+        private Random random = new();
 
         public MemeticAlgorithm(Population population)
         {
@@ -35,15 +36,16 @@ namespace MachilpebLibrary.Algorithm
         public void MemeticSearch()
         {
             GenerateInitialPop();
-            do
+            for (int i = 0; i < GENERATION_COUNT; i++) // podmienka 1.pocet iteracii, 2. pocet restartov
             {
                 var pop = this.GenerateNextPopulation();
                 this._population = pop;
-                if (/*condition*/ true) // podmienka pre skonvergovanie nezlepsenie fitness funkcie
+
+                if (false) // podmienka pre skonvergovanie nezlepsenie fitness funkcie
                 {
                     this.RestartPopulation();
                 }
-            } while (/*condition*/ true); // podmienka 1.pocet iteracii, 2. pocet restartov 
+            } 
 
         }
 
@@ -83,11 +85,19 @@ namespace MachilpebLibrary.Algorithm
 
             newPop.AddIndividual(parent[0]);
 
-
             for (int i = 0; i < Population.INDIVIDUAL_COUNT - 1; i++)
             {
-                var child = this.Mutation(children[i]);
-                child = this.LocalSearch(child);
+                var child = children[i];
+
+                if (this.random.NextDouble() < PROBABILITY_MUTATION)
+                {
+                    child = this.Mutation(child);
+                }
+                if (this.random.NextDouble() < PROBABILITY_LOCAL_SEARCH)
+                {
+                    child = this.LocalSearch(child);
+                }
+
                 newPop.AddIndividual(child);
             }
 
@@ -96,12 +106,33 @@ namespace MachilpebLibrary.Algorithm
 
 
         // TODO: Check implemention this method
+        // treba vyberat podla pravdepodobnosti, kde lepsie maju vacsiu pravdepodobnost
+        // treba urobit prevratenu hodnotu 
+        // rulettet-wheel selection
+
         private Individual[] Selection()
         {
             var individuals = new Individual[PARENTS_COUNT];
+            var probalityArray = this._population.GetProbalityArray();
+
             for (int i = 0; i < PICKED_COUNT; i++)
             {
-                individuals[i] = this._population.ExtractBest(i);
+                var rnd = this.random.NextDouble();
+
+                double from = 0;
+
+                for (int j = 0; j < probalityArray.Length; j++)
+                {
+                    double to = from + probalityArray[j].Item2;
+
+                    if (from <= rnd && rnd < to)
+                    {
+                        individuals[i] = probalityArray[j].Item1;
+                        break;
+                    }
+
+                    from = to;
+                } 
             }
 
             return individuals;
@@ -208,9 +239,13 @@ namespace MachilpebLibrary.Algorithm
         }
 
         // TODO: Implement this method
-        private Individual GenerateNeighbour(object currentPop)
+        private Individual GenerateNeighbour(Individual individual)
         {
-            throw new NotImplementedException();
+            // zlepsovat ucelovku
+            // individual je validny tak uberat nabijacie pointy
+            // individual nie je validny tak pridavat nabijacie pointy
+
+            return individual;
         }
 
     }

@@ -335,7 +335,7 @@ namespace MachilpebLibrary.Base
 
         public static int GetRelocationTime(int relocationDistance)
         {
-            return (int)Math.Round(relocationDistance / RELOCATION_SPEED * 1000 / 60); 
+            return (int)Math.Round(relocationDistance / (RELOCATION_SPEED * 1000.0 / 60.0)); 
         }
 
         private static DayOfWeek getDay(string date)
@@ -358,6 +358,8 @@ namespace MachilpebLibrary.Base
                     return DayOfWeek.Saturday;
                 case 2:
                     return DayOfWeek.Sunday;
+                default:
+                    break;
             }
 
             throw new Exception("Invalid day");

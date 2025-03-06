@@ -40,6 +40,18 @@ namespace MachilpebLibrary.Algorithm
             }
         }
 
+        public (Individual, double)[] GetProbalityArray()
+        {
+            var probalityArray = new (Individual, double)[this._population.Length];
+
+            for (int i = 0; i < this._population.Length; i++)
+            {
+                probalityArray[i] = (this._population[i], 1 / this._population[i].GetFitnessFun()  );
+            }
+
+            return probalityArray;
+        }
+
         //TODO: Implement this method
         internal Individual ExtractBest(int i)
         {

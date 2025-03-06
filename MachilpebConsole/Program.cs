@@ -16,7 +16,7 @@ namespace MachilpebConsole
 
             Individual individual = Individual.GenerateIndividual();
 
-            DiscreteEventSimulation simulation = new DiscreteEventSimulation(individual);
+            DiscreteEventSimulation simulation = new(individual);
 
             simulation.simulate();
 
