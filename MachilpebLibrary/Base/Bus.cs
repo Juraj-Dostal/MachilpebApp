@@ -179,6 +179,11 @@ namespace MachilpebLibrary.Base
             }
         }
 
+        public bool IsBatteryEmpty()
+        {
+            return _battery == 0;
+        }
+
         public void SetDepo(BusStop busStop)
         {
             if (_startDepo != null || _endDepo != null)

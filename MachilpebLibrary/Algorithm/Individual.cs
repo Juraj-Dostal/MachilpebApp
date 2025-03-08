@@ -1,4 +1,5 @@
 ﻿using MachilpebLibrary.Base;
+using MachilpebLibrary.Simulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace MachilpebLibrary.Algorithm
         public static int PRICE_CHARGING_POINT = 2500; // €
         public static int PRICE_PENALTY = 250000;
 
+        private Random _rnd = new Random();
 
         string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\Log_Simulate_Individual.txt";
 
@@ -38,8 +40,11 @@ namespace MachilpebLibrary.Algorithm
                 this._usedChargingPoint[i] = (busStop[i], 0);
             }
 
-            // inicializacia nabijacich bodov !!Docasne
-            // this.InitChargingPoint();
+            // inicializacia nabijacich bodov 
+            this.InitChargingPoint();
+
+            // simulacia jedinca
+            this.SimulateIndividual();
         }
 
         public Individual(Individual individual)
@@ -53,6 +58,8 @@ namespace MachilpebLibrary.Algorithm
                 this._chargingPoint[i] = (individual._chargingPoint[i].Item1, individual._chargingPoint[i].Item2);
                 this._usedChargingPoint[i] = (individual._usedChargingPoint[i].Item1, 0);
             }
+
+            this.SimulateIndividual();
         }
 
         public Individual((BusStop, int)[] chargingPoint)
@@ -67,6 +74,8 @@ namespace MachilpebLibrary.Algorithm
             {
                 this._usedChargingPoint[i] = (chargingPoint[i].Item1, 0);
             }
+
+            this.SimulateIndividual();
         }
 
         public Individual(Individual firstParent, Individual secondParent, bool[] mask)
@@ -88,7 +97,56 @@ namespace MachilpebLibrary.Algorithm
                 this._usedChargingPoint[i] = (firstParent._chargingPoint[i].Item1, 0);
             }
 
+            this.SimulateIndividual();
+        }
 
+
+        /*
+         * Tato metoda sluzi pre Local Search
+         * 
+         * Snazi sa zlepsovat jedinca tak, ze zmeni pocet nabijacich bodov na jednej zastavke
+         * 
+         * individual je validny tak uberat nabijacie pointy
+         * individual nie je validny tak pridavat nabijacie pointy
+         */
+
+        public Individual GenerateNeighbour()
+        {
+            var copy = new (BusStop, int)[this._chargingPoint.Length];
+            Array.Copy(this._chargingPoint, copy, this._chargingPoint.Length);
+            var rnd = new Random();
+
+            if (this._cancelled < 2)
+            {
+                var cp = copy.Where((individual, point) => point > 1);
+                var bs = cp.ElementAt(rnd.Next(0, cp.Count()));
+                bs.Item2--;
+            }
+            else
+            {
+                var cp = copy.Where((individual, point) => point == 0);
+                var bs = cp.ElementAt(rnd.Next(0, cp.Count()));
+                bs.Item2++;
+
+            }
+
+            return new Individual(copy);
+        }
+
+        public void Mutate()
+        {
+            var i = this._rnd.Next(0, this._chargingPoint.Length);
+
+            if (this._chargingPoint[i].Item2 == 0)
+            {
+                this._chargingPoint[i].Item2++;
+            }
+            else
+            {
+                this._chargingPoint[i].Item2--;
+            }
+
+            this.SimulateIndividual();
         }
 
         public int GetFitnessFun()
@@ -97,7 +155,7 @@ namespace MachilpebLibrary.Algorithm
 
             price += this._cancelled * PRICE_PENALTY;
 
-            return 0;
+            return price;
         }
 
         public int GetObjectiveFun()
@@ -109,7 +167,7 @@ namespace MachilpebLibrary.Algorithm
                 price += PRICE_CHARGING_STATION + this._chargingPoint[i].Item2 * PRICE_CHARGING_POINT;
             }
 
-            return 0; 
+            return price; 
         }
 
         public int GetBusStopCount()
@@ -164,7 +222,6 @@ namespace MachilpebLibrary.Algorithm
             }
         }
 
-
         private int FindBusStop(BusStop busStop)
         {
             for (int i = 0; i < this._chargingPoint.Length; i++)
@@ -199,18 +256,37 @@ namespace MachilpebLibrary.Algorithm
             }
         }
 
-        public static Individual GenerateIndividual()
-        { 
-            var individual = new Individual();
+        private void SimulateIndividual()
+        {
+            var simulation = new DiscreteEventSimulation(this);
+            this._cancelled = simulation.simulate();
+        }
 
-            individual.InitChargingPoint();
+        public override string? ToString()
+        {
+            var cp = this._chargingPoint.Where((individual, point) => point > 0);
 
-            return individual;
+            var sb = new StringBuilder();
+
+            foreach ( var c in cp)
+            {
+                sb.Append(c.Item1.Id + " " + c.Item1.Name + " " + c.Item2 + "\n");
+            }
+
+            return sb.ToString();
+
         }
 
         public override bool Equals(object? obj)
         {
             return obj is Individual individual && EqualityComparer<(BusStop, int)[]>.Default.Equals(_chargingPoint, individual._chargingPoint);
+        }
+        
+        public static Individual GenerateIndividual()
+        { 
+            var individual = new Individual();
+
+            return individual;
         }
     }
 }

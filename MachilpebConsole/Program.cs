@@ -11,14 +11,24 @@ namespace MachilpebConsole
             Bus.BATTERY_CHARGING = 1.5;
             Bus.BATTERY_CONSUMPTION = 0.8;
             Bus.BATTERY_CAPACITY = 140;
-
+            
+            Population.INDIVIDUAL_COUNT = 50;
+            
+            MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = 0.35;
+            MemeticAlgorithm.PROBABILITY_MUTATION = 0.05;
+            MemeticAlgorithm.PRESERVE = 0.1;
+            MemeticAlgorithm.PARENTS_COUNT = 15;
+            MemeticAlgorithm.LOCAL_SEARCH_ITERATION = 15;
+            MemeticAlgorithm.GENERATION_COUNT = 100;
+            
             DataReader dataReader = DataReader.GetInstance();
 
-            Individual individual = Individual.GenerateIndividual();
+            var algoritm = new MemeticAlgorithm();
 
-            DiscreteEventSimulation simulation = new(individual);
+            var bestIndividual = algoritm.MemeticSearch();
 
-            simulation.simulate();
+            Console.WriteLine(bestIndividual.ToString());
+
 
         }
     }

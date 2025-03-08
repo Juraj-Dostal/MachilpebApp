@@ -28,8 +28,12 @@ namespace MachilpebLibrary.Simulation
             this._individual = individual;
         }
 
-        public void simulate()
+
+        // vrati pocet nedokoncenych turnusov
+        public int simulate()
         {
+            var cancalled = 0;
+
             using (var writer = File.CreateText(route))
             {
 
@@ -41,8 +45,14 @@ namespace MachilpebLibrary.Simulation
                     {
                         Event currentEvent = this._eventCalendar.Dequeue();
                         currentEvent.Trigger();
-
+                        
                         writer.Write(currentEvent.ToString());
+
+                        if (currentEvent.Bus.IsBatteryEmpty())
+                        {
+                            cancalled++;
+                            continue;
+                        }
 
                         if (currentEvent is ArriveEvent)
                         {
@@ -51,6 +61,8 @@ namespace MachilpebLibrary.Simulation
                     }
                 }
             }
+
+            return cancalled;
         }
 
         // inicializacia simulacie pre den

@@ -27,7 +27,7 @@ namespace MachilpebLibrary.Algorithm
             }
         }
 
-        public void AddIndividual(Individual individual)
+        public void SetIndividual(Individual individual)
         { 
             for (int i = 0; i < this._population.Length; i++) 
             {
@@ -37,27 +37,45 @@ namespace MachilpebLibrary.Algorithm
                 }
 
                 this._population[i] = individual;
+                break;
+            }
+        }
+
+        public void SetIndividuals(Individual[] individuals)
+        {
+            for (int i = 0; i < individuals.Length; i++)
+            {
+                this.SetIndividual(individuals[i]);
             }
         }
 
         public (Individual, double)[] GetProbalityArray()
         {
+            var weightArray = new double[this._population.Length];
             var probalityArray = new (Individual, double)[this._population.Length];
+
+            var sum = 0.0;
 
             for (int i = 0; i < this._population.Length; i++)
             {
-                probalityArray[i] = (this._population[i], 1 / this._population[i].GetFitnessFun()  );
+                weightArray[i] = (double)1 / (this._population[i].GetFitnessFun() / 10000);
+                sum += weightArray[i];
+            }
+
+            for (int i = 0; i < this._population.Length; i++)
+            {
+                probalityArray[i] = (this._population[i], weightArray[i] / sum );
             }
 
             return probalityArray;
         }
 
         //TODO: Implement this method
-        internal Individual ExtractBest(int i)
+        internal Individual[] ExtractBest(int i)
         {
-            var sorted = this._population.OrderBy(individual => individual.GetFitnessFun()).ToArray();
+            var sorted = this._population.OrderBy(individual => individual.GetFitnessFun());
 
-            return sorted[i];
+            return sorted.Take(i).ToArray();
         }
     }
 }
