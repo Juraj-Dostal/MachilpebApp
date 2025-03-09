@@ -7,7 +7,7 @@ namespace MachilpebLibrary.Algorithm
     {
         //Konstanta
         public static int GENERATION_COUNT { get; set; }
-        public static int PICKED_COUNT = (int) Math.Round( Population.INDIVIDUAL_COUNT * 0.1); // best picked 
+        public static int ELITE_COUNT = (int) Math.Round( Population.INDIVIDUAL_COUNT * 0.1); // best picked 
 
         public static int LOCAL_SEARCH_ITERATION { get; set; }
         public static int PARENTS_COUNT { get; set; } // pocet rodicov
@@ -84,7 +84,7 @@ namespace MachilpebLibrary.Algorithm
             var newPop = new Population(this._population);
 
             // elitna skupina 
-            var elite = this._population.ExtractBest(PICKED_COUNT);
+            var elite = this._population.ExtractBest(ELITE_COUNT);
             newPop.SetIndividuals(elite);
 
             var parent = Selection();
@@ -132,7 +132,7 @@ namespace MachilpebLibrary.Algorithm
 
                     if (from <= rnd && rnd < to)
                     {
-                        if (!individuals.Contains(probalityArray[j].Item1))
+                        if (individuals.Contains(probalityArray[j].Item1))
                         {
                             i--;
                         }
@@ -154,10 +154,10 @@ namespace MachilpebLibrary.Algorithm
         // TODO: Check implementation this method
         private Individual[] Crossover(Individual[] parents)
         {
-            var individuals = new Individual[Population.INDIVIDUAL_COUNT - PICKED_COUNT];
+            var individuals = new Individual[Population.INDIVIDUAL_COUNT - ELITE_COUNT];
             var maskSize = parents[0].GetBusStopCount();
 
-            for (int i = 0; i < Population.INDIVIDUAL_COUNT - PICKED_COUNT; i++)
+            for (int i = 0; i < Population.INDIVIDUAL_COUNT - ELITE_COUNT; i++)
             {
                 var mask = this.GenerateMask(maskSize);
 

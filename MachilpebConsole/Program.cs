@@ -12,14 +12,14 @@ namespace MachilpebConsole
             Bus.BATTERY_CONSUMPTION = 0.8;
             Bus.BATTERY_CAPACITY = 140;
             
-            Population.INDIVIDUAL_COUNT = 50;
+            Population.INDIVIDUAL_COUNT = 20;
             
             MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = 0.35;
             MemeticAlgorithm.PROBABILITY_MUTATION = 0.05;
             MemeticAlgorithm.PRESERVE = 0.1;
-            MemeticAlgorithm.PARENTS_COUNT = 15;
+            MemeticAlgorithm.PARENTS_COUNT = 5;
             MemeticAlgorithm.LOCAL_SEARCH_ITERATION = 15;
-            MemeticAlgorithm.GENERATION_COUNT = 100;
+            MemeticAlgorithm.GENERATION_COUNT = 25;
             
             DataReader dataReader = DataReader.GetInstance();
 
@@ -28,7 +28,6 @@ namespace MachilpebConsole
             var bestIndividual = algoritm.MemeticSearch();
 
             Console.WriteLine(bestIndividual.ToString());
-
 
         }
     }

@@ -237,18 +237,18 @@ namespace MachilpebLibrary.Algorithm
 
         private void InitChargingPoint()
         {
-            var rnd = new Random();
+            var count = this._rnd.Next(0, this._chargingPoint.Length);
 
-            for (int i = 0; i < 20;)
+            for (int i = 0; i < count;)
             {
-                var bs = rnd.Next(0, this._chargingPoint.Length);
+                var bs = this._rnd.Next(0, this._chargingPoint.Length);
 
                 if (this._chargingPoint[bs].Item2 != 0)
                 {
                     continue;
                 }
 
-                this._chargingPoint[bs].Item2 = rnd.Next(1, 3);
+                this._chargingPoint[bs].Item2 = this._rnd.Next(1, 3);
 
                 i++;
 
@@ -264,11 +264,11 @@ namespace MachilpebLibrary.Algorithm
 
         public override string? ToString()
         {
-            var cp = this._chargingPoint.Where((individual, point) => point > 0);
+            var cp = this._chargingPoint.Where(c => c.Item2 > 0);
 
             var sb = new StringBuilder();
 
-            foreach ( var c in cp)
+            foreach (var c in cp)
             {
                 sb.Append(c.Item1.Id + " " + c.Item1.Name + " " + c.Item2 + "\n");
             }
