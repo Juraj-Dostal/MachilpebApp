@@ -9,18 +9,18 @@ namespace MachilpebLibrary.Algorithm
     public class Population
     {
         // Konstanta
-        public static int INDIVIDUAL_COUNT { get; set; }
+        public static int POPULATION_SIZE { get; set; }
 
         private Individual[] _population;
 
         public Population()
         {
-            this._population = new Individual[INDIVIDUAL_COUNT];
+            this._population = new Individual[POPULATION_SIZE];
         }
 
         public Population(Population population)
         {
-            this._population = new Individual[INDIVIDUAL_COUNT];
+            this._population = new Individual[POPULATION_SIZE];
             for (int i = 0; i < population._population.Length; i++)
             {
                 this._population[i] = new Individual(population._population[i]);
@@ -58,7 +58,7 @@ namespace MachilpebLibrary.Algorithm
 
             for (int i = 0; i < this._population.Length; i++)
             {
-                weightArray[i] = (double)1 / (this._population[i].GetFitnessFun() / 10000);
+                weightArray[i] = (double)1 / this._population[i].GetFitnessFun();
                 sum += weightArray[i];
             }
 
@@ -66,6 +66,8 @@ namespace MachilpebLibrary.Algorithm
             {
                 probalityArray[i] = (this._population[i], weightArray[i] / sum );
             }
+            
+            var probality = probalityArray.Sum(individual => individual.Item2);
 
             return probalityArray;
         }
@@ -76,6 +78,11 @@ namespace MachilpebLibrary.Algorithm
             var sorted = this._population.OrderBy(individual => individual.GetFitnessFun());
 
             return sorted.Take(i).ToArray();
+        }
+
+        public Individual? GetBestIndividual()
+        {
+            return this._population.Where(individual => individual.GetCancelled() == 0).OrderBy(individual => individual.GetFitnessFun()).First();
         }
     }
 }

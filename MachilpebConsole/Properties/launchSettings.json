@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MachilpebConsole": {
+      "commandName": "Project",
+      "commandLineArgs": "--population-size=25 --generation-count=50 --probability-local-search=0,35 --probability-mutation=0,05"
+    }
+  }
+}

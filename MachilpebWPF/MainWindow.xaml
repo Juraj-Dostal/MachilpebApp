@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MachilpebWPF"
         mc:Ignorable="d"
-        Title="Machilpeb" Height="550" Width="800">
+        Title="Machilpeb" Height="555" Width="800">
     <Grid>
 
         <Grid.RowDefinitions>
@@ -16,7 +16,7 @@
         <Grid>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -37,7 +37,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Costs" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+                    <TextBlock Text="Costs" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="0"/>
 
                     <Grid Grid.Row="1" VerticalAlignment="Center" Margin="5">
                         <Grid.ColumnDefinitions>
@@ -46,7 +46,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Price of the charging station:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="PriceChargingStation" Text="50000" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" TextChanged="PriceChargingStation_TextChanged" Grid.Column="1"/>
+                        <TextBox Name="PriceChargingStation" Text="50000" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" 
+                                 MinWidth="60"  Grid.Column="1"/>
                         <TextBlock Text="€" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
@@ -57,7 +58,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Price of charging point:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="PriceChargingPoint" Text="2500" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" TextChanged="PriceChargingPoint_TextChanged" Grid.Column="1"/>
+                        <TextBox Name="PriceChargingPoint" Text="2500" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" 
+                                 MinWidth="60"  Grid.Column="1"/>
                         <TextBlock Text="€" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
@@ -72,7 +74,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Buses" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+                    <TextBlock Text="Buses" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="0"/>
 
                     <Grid Grid.Row="1" VerticalAlignment="Center" Margin="5">
                         <Grid.ColumnDefinitions>
@@ -81,7 +83,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Battery charging:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="BatteryCharging" Text="1.33" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" TextChanged="BatteryCharging_TextChanged" Grid.Column="1"/>
+                        <TextBox Name="BatteryCharging" Text="1,33" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60"  Grid.Column="1"/>
                         <TextBlock Text="kWh/min" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
@@ -92,7 +94,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Battery consuption:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="BatteryConsumption" Text="0.8" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" TextChanged="BatteryConsumption_TextChanged" Grid.Column="1"/>
+                        <TextBox Name="BatteryConsumption" Text="0,8" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
                         <TextBlock Text="kWh/km" HorizontalAlignment="Center" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
@@ -103,7 +105,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Battery capacity:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="BatteryCapacity" Text="140" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" TextChanged="BatteryCapacity_TextChanged" Grid.Column="1"/>
+                        <TextBox Name="BatteryCapacity" Text="140" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
                         <TextBlock Text="kWh" FontSize="18" Grid.Column="2"/>
                     </Grid>
                 </Grid>
@@ -117,7 +119,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Algorithm"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Grid.Row="0"/>
+                    <TextBlock Text="Algorithm"  HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="0"/>
 
                     <Grid Grid.Row="1" VerticalAlignment="Center" Margin="5">
                         <Grid.ColumnDefinitions>
@@ -126,7 +128,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Population size:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="" Text="50" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" TextChanged="BatteryCharging_TextChanged" Grid.Column="1"/>
+                        <TextBox Name="PopulationSize" Text="50" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
                         <TextBlock Text="" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
@@ -136,8 +138,9 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        
                         <TextBlock Text="Generation count:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="some" Text="100" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" TextChanged="BatteryCharging_TextChanged" Grid.Column="1"/>
+                        <TextBox Name="GenerationCount" Text="100" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
                         <TextBlock Text="" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
@@ -148,7 +151,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Probability Mutation:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="ProbabilityMutation" Text="0.05" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" TextChanged="BatteryCharging_TextChanged" Grid.Column="1"/>
+                        <TextBox Name="ProbabilityMutation" Text="0,05" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
                         <TextBlock Text="" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
@@ -159,7 +162,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Probability Local Search:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="ProbabilityLocalSearch" Text="0.35" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" TextChanged="BatteryCharging_TextChanged" Grid.Column="1"/>
+                        <TextBox Name="ProbabilityLocalSearch" Text="0,35" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60"  Grid.Column="1"/>
                         <TextBlock Text="" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
@@ -172,18 +175,72 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
-                <TextBlock Text="Solution" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="0"/>
-                
-                
+                <TextBlock Text="Best Solution" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="0"/>
 
+                <TextBlock Text="Charger Location" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="1"/>
+                <TextBlock Name="solutionBlock" Margin="5" TextWrapping="Wrap" MinHeight="200"  VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="2" />
+
+
+                <Grid Grid.Row="3" Margin="5" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Text="Number of built charging stations:" Margin="5, 0" HorizontalAlignment="Left" FontSize="18" />
+                    <TextBlock Text="0"  Name="ChargingStationBlock" Margin="5, 0" HorizontalAlignment="Right" FontSize="18" Grid.Column="1"/>
+                    <TextBlock Text="pcs" Margin="5, 0" FontSize="18" Grid.Column="2"/>
+
+                </Grid>
+
+                <Grid Grid.Row="4" Margin="5" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Text="Number of built charging point:" Margin="5, 0" HorizontalAlignment="Left"  FontSize="18" />
+                    <TextBlock Text="0"  Name="ChargingPointBlock" Margin="5, 0"  FontSize="18" Grid.Column="1"/>
+                    <TextBlock Text="pcs" Margin="5, 0" FontSize="18" Grid.Column="2"/>
+
+                </Grid>
+
+                <Grid Grid.Row="5" Margin="5" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Total Costs:" Margin="5, 0" HorizontalAlignment="Left"  FontSize="18"  />
+                    <TextBlock Text="0"  Name="TotalCostsBlock" Margin="5, 0" HorizontalAlignment="Right" FontSize="18" Grid.Column="1"/>
+                    <TextBlock Text="€" Margin="5, 0" FontSize="18" Grid.Column="2"/>
+                </Grid>
+
+                <Grid Grid.Row="6" Margin="5" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Duration of Calculation:" Margin="5, 0" HorizontalAlignment="Left" FontSize="18"  />
+                    <TextBlock Text="0"  Name="TimeBlock" Margin="5, 0" HorizontalAlignment="Right" FontSize="18" Grid.Column="1"/>
+                    <TextBlock Text="s" Margin="5, 0" FontSize="18" Grid.Column="2"/>
+                </Grid>
 
             </Grid>
         </Grid>
+        
         <Grid Grid.Row="1" Margin="10">
-            <Button Click="Button_Click" MaxWidth= "100" >Run Algorithm</Button>
+            <Button Name="RunAlgorithmButton" Click="Button_Click" MaxWidth= "100" >Run Algorithm</Button>
         </Grid>
 
     </Grid>

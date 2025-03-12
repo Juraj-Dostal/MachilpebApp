@@ -34,33 +34,34 @@ namespace MachilpebLibrary.Simulation
         {
             var cancalled = 0;
 
-            using (var writer = File.CreateText(route))
+            //zastavenie logovania
+            //using (var writer = File.CreateText(route))
+            //{
+
+            foreach (Base.DayOfWeek day in Enum.GetValues(typeof(Base.DayOfWeek)))
             {
+                InitSimulate(day);
 
-                foreach (Base.DayOfWeek day in Enum.GetValues(typeof(Base.DayOfWeek)))
+                while (_eventCalendar.Count > 0)
                 {
-                    InitSimulate(day);
+                    Event currentEvent = this._eventCalendar.Dequeue();
+                    currentEvent.Trigger();
 
-                    while (_eventCalendar.Count > 0)
+                    //writer.Write(currentEvent.ToString());
+
+                    if (currentEvent.Bus.IsBatteryEmpty())
                     {
-                        Event currentEvent = this._eventCalendar.Dequeue();
-                        currentEvent.Trigger();
-                        
-                        writer.Write(currentEvent.ToString());
+                        cancalled++;
+                        continue;
+                    }
 
-                        if (currentEvent.Bus.IsBatteryEmpty())
-                        {
-                            cancalled++;
-                            continue;
-                        }
-
-                        if (currentEvent is ArriveEvent)
-                        {
-                            this.PlanNextEvent((ArriveEvent)currentEvent);
-                        }
+                    if (currentEvent is ArriveEvent)
+                    {
+                        this.PlanNextEvent((ArriveEvent)currentEvent);
                     }
                 }
             }
+            //}
 
             return cancalled;
         }

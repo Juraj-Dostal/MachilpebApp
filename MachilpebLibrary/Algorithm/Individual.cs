@@ -12,13 +12,13 @@ namespace MachilpebLibrary.Algorithm
     public class Individual
     {
         // Konstanta
-        public static int PRICE_CHARGING_STATION = 50000; // €
-        public static int PRICE_CHARGING_POINT = 2500; // €
-        public static int PRICE_PENALTY = 250000;
+        public static int PRICE_CHARGING_STATION { get; set; }// €
+        public static int PRICE_CHARGING_POINT { get; set; } // €
+        public static int PRICE_PENALTY { get; set; } // €
 
         private Random _rnd = new Random();
 
-        string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\Log_Simulate_Individual.txt";
+        //string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\Log_Simulate_Individual.txt";
 
         // vektor nabijacich bodov (zastavka, pocet nabijajucich bodov)
         private (BusStop, int)[] _chargingPoint;
@@ -27,7 +27,7 @@ namespace MachilpebLibrary.Algorithm
         // atribute potrebne pre algoritmus
         private int _cancelled = 0; // pocet neuskutocnenych turnusov
 
-        private Individual()
+        public Individual()
         {
             var busStop = BusStop.FINAL_BUSSTOPS;
 
@@ -114,20 +114,18 @@ namespace MachilpebLibrary.Algorithm
         {
             var copy = new (BusStop, int)[this._chargingPoint.Length];
             Array.Copy(this._chargingPoint, copy, this._chargingPoint.Length);
-            var rnd = new Random();
 
-            if (this._cancelled < 2)
+            if (this._cancelled < 0)
             {
-                var cp = copy.Where((individual, point) => point > 1);
-                var bs = cp.ElementAt(rnd.Next(0, cp.Count()));
+                var cp = copy.Where((individual, point) => point > 0);
+                var bs = cp.ElementAt(this._rnd.Next(0, cp.Count()));
                 bs.Item2--;
             }
             else
             {
                 var cp = copy.Where((individual, point) => point == 0);
-                var bs = cp.ElementAt(rnd.Next(0, cp.Count()));
+                var bs = cp.ElementAt(this._rnd.Next(0, cp.Count()));
                 bs.Item2++;
-
             }
 
             return new Individual(copy);
@@ -164,7 +162,10 @@ namespace MachilpebLibrary.Algorithm
 
             for (int i = 0; i < this._chargingPoint.Length; i++)
             {
-                price += PRICE_CHARGING_STATION + this._chargingPoint[i].Item2 * PRICE_CHARGING_POINT;
+                if (this._chargingPoint[i].Item2 > 0)
+                {
+                    price += PRICE_CHARGING_STATION + this._chargingPoint[i].Item2 * PRICE_CHARGING_POINT;
+                }
             }
 
             return price; 
@@ -178,6 +179,16 @@ namespace MachilpebLibrary.Algorithm
         public int GetChargingPoint(BusStop busStop)
         {
             return this._chargingPoint[this.FindBusStop(busStop)].Item2;
+        }
+
+        public int GetCancelled()
+        {
+            return this._cancelled;
+        }
+
+        public (BusStop, int)[] GetSolution()
+        {
+            return this._chargingPoint.Where(c => c.Item2 > 0).ToArray();
         }
 
         public void SetChargingPoint(BusStop busStop, int value)
@@ -252,7 +263,7 @@ namespace MachilpebLibrary.Algorithm
 
                 i++;
 
-                File.AppendAllText(route, this._chargingPoint[bs].Item1.Id + " " + this._chargingPoint[bs].Item1.Name + " " + this._chargingPoint[bs].Item2 + "\n");
+                //File.AppendAllText(route, this._chargingPoint[bs].Item1.Id + " " + this._chargingPoint[bs].Item1.Name + " " + this._chargingPoint[bs].Item2 + "\n");
             }
         }
 
@@ -264,11 +275,9 @@ namespace MachilpebLibrary.Algorithm
 
         public override string? ToString()
         {
-            var cp = this._chargingPoint.Where(c => c.Item2 > 0);
-
             var sb = new StringBuilder();
 
-            foreach (var c in cp)
+            foreach (var c in this._chargingPoint)
             {
                 sb.Append(c.Item1.Id + " " + c.Item1.Name + " " + c.Item2 + "\n");
             }
@@ -281,12 +290,6 @@ namespace MachilpebLibrary.Algorithm
         {
             return obj is Individual individual && EqualityComparer<(BusStop, int)[]>.Default.Equals(_chargingPoint, individual._chargingPoint);
         }
-        
-        public static Individual GenerateIndividual()
-        { 
-            var individual = new Individual();
-
-            return individual;
-        }
+       
     }
 }
