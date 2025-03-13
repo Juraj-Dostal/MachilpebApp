@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using MachilpebLibrary.Algorithm;
@@ -31,7 +32,7 @@ namespace MachilpebWPF
 
             Population.POPULATION_SIZE = int.Parse(PopulationSize.Text);
             MemeticAlgorithm.GENERATION_COUNT = int.Parse(GenerationCount.Text);
-            
+
             MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = double.Parse(ProbabilityLocalSearch.Text);
             MemeticAlgorithm.PROBABILITY_MUTATION = double.Parse(ProbabilityMutation.Text);
 
@@ -45,21 +46,20 @@ namespace MachilpebWPF
             var algoritm = new MemeticAlgorithm();
 
             var bestIndividual = algoritm.MemeticSearch();
-            
+
             var solution = bestIndividual.GetSolution();
 
             stopWatch.Stop();
 
-            var sb = new StringBuilder();
             var point = 0;
+
+            var solutionTuple = new List<Tuple<int, string, int>>();
 
             foreach (var item in solution)
             {
-                sb.Append(item.Item1.Id + " " + item.Item1.Name + " " + item.Item2 + "\n");
+                SolutionTable.Items.Add(new { Id = item.Item1.Id, Name = item.Item1.Name, Point = item.Item2 });
                 point += item.Item2;
             }
-
-            solutionBlock.Text = sb.ToString();
 
             ChargingStationBlock.Text = solution.Length.ToString();
             ChargingPointBlock.Text = point.ToString();

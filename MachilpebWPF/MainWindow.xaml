@@ -185,7 +185,16 @@
                 <TextBlock Text="Best Solution" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="0"/>
 
                 <TextBlock Text="Charger Location" Margin="5" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.Row="1"/>
-                <TextBlock Name="solutionBlock" Margin="5" TextWrapping="Wrap" MinHeight="200"  VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="2" />
+                <ListView Name="SolutionTable" ItemsSource="{Binding}" Grid.Row="2" Margin="5" >
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Id BusStop" DisplayMemberBinding="{Binding Id}" Width="Auto"/>
+                            <GridViewColumn Header="Name BusStop" DisplayMemberBinding="{Binding Name}" Width="215"/>
+                            <GridViewColumn Header="Point (pcs)" DisplayMemberBinding="{Binding Point}" Width="Auto"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
 
 
                 <Grid Grid.Row="3" Margin="5" VerticalAlignment="Center">
