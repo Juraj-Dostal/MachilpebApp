@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MachilpebWPF"
         mc:Ignorable="d"
-        Title="Machilpeb" Height="550" Width="400">
+        Title="Machilpeb" Height="550" Width="400"
+        Closing="MainWindow_Closing">
     <Grid>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="45"/>
         </Grid.RowDefinitions>
 
         <Grid>
@@ -248,7 +249,7 @@
             </Grid>-->
         </Grid>
         
-        <Grid Grid.Row="1" Margin="10">
+        <Grid Grid.Row="1" Margin="5">
             <Button Name="RunAlgorithmButton" Click="Button_Click" MaxWidth= "100" >Run Algorithm</Button>
         </Grid>
 

@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MachilpebWPF"
         mc:Ignorable="d"
-        Title="SolutionWindow" Height="550" Width="400">
+        Title="SolutionWindow" Height="550" Width="400"
+        Closing="SolutionWindow_Closing">
     <Grid Margin="5">
 
         <Grid.RowDefinitions>

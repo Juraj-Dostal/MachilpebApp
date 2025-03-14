@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -13,6 +14,8 @@ namespace MachilpebWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -22,6 +25,7 @@ namespace MachilpebWPF
         {
             RunAlgorithmButton.IsEnabled = false;
 
+            this.DisableChange();
 
             // parametre sa nesmu zmenit riesenie toho isteho problemu
             Bus.BATTERY_CHARGING = double.Parse(BatteryCharging.Text);
@@ -40,55 +44,38 @@ namespace MachilpebWPF
 
             Thread newWindowThread = new Thread(new ThreadStart(() =>
             {
-                // Create and show the secondary window
                 var solutionWindow = new SolutionWindow();
 
-                // Start the Dispatcher processing
                 System.Windows.Threading.Dispatcher.Run();
             }));
 
             // Set the apartment state
             newWindowThread.SetApartmentState(ApartmentState.STA);
-
             // Start the thread
             newWindowThread.Start();
 
-            
-
-            //var stopWatch = new Stopwatch();
-
-            //stopWatch.Start();
-
-            //DataReader dataReader = DataReader.GetInstance();
-
-            //var algoritm = new MemeticAlgorithm();
-
-            //var bestIndividual = algoritm.MemeticSearch();
-
-            //var solution = bestIndividual.GetSolution();
-
-            //stopWatch.Stop();
-
-            //var point = 0;
-
-            //var solutionTuple = new List<Tuple<int, string, int>>();
-
-            //foreach (var item in solution)
-            //{
-            //    SolutionTable.Items.Add(new { Id = item.Item1.Id, Name = item.Item1.Name, Point = item.Item2 });
-            //    point += item.Item2;
-            //}
-
-            //ChargingStationBlock.Text = solution.Length.ToString();
-            //ChargingPointBlock.Text = point.ToString();
-
-            //TotalCostsBlock.Text = bestIndividual.GetObjectiveFun().ToString();
-
-            //var time = stopWatch.Elapsed;
-            //TimeBlock.Text = time.TotalSeconds.ToString();
 
             RunAlgorithmButton.IsEnabled = true;
 
+        }
+
+        private void DisableChange()
+        {
+            BatteryCharging.IsEnabled = false;
+            BatteryConsumption.IsEnabled = false;
+            BatteryCapacity.IsEnabled = false;
+            PriceChargingStation.IsEnabled = false;
+            PriceChargingPoint.IsEnabled = false;
+            PopulationSize.IsEnabled = false;
+            GenerationCount.IsEnabled = false;
+            ProbabilityLocalSearch.IsEnabled = false;
+            ProbabilityMutation.IsEnabled = false;
+        }
+
+        // zostava na pozadi proces pokracuje
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            this.Close();
         }
     }
 }

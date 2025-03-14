@@ -2,6 +2,7 @@
 using MachilpebLibrary.Base;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -59,6 +60,11 @@ namespace MachilpebWPF
 
             var time = stopWatch.Elapsed;
             TimeBlock.Text = time.TotalSeconds.ToString();
+        }
+
+        private void SolutionWindow_Closing(object sender, CancelEventArgs e)
+        {
+            this.Close();
         }
     }
 }

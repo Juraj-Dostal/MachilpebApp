@@ -89,7 +89,7 @@ namespace MachilpebLibrary.Algorithm
          * Metoda sluzi na vygenerovanie novej dalsej populacie
          * Na ktoru sa zoberu rodicia a vytvoria sa deti
          * aplikuju sa operatory
-         *      OPERATORY: Selection, Recombination, Mutation, LocalSearch
+         *      OPERATORY: Selection, Crossover, Mutation, LocalSearch
          * 
          */
 
@@ -201,7 +201,6 @@ namespace MachilpebLibrary.Algorithm
             individual.Mutate();
 
             return individual;
-
         }
 
         /*
@@ -251,8 +250,12 @@ namespace MachilpebLibrary.Algorithm
 
                 if (actualIndividual.IsCancelled()) {
                     // pridanie nabijacich bodov
-                    newIndividual.AddChargingPoint(busStop);
+                    var actualPoint = newIndividual.AddChargingPoint(busStop);
 
+                    if (actualPoint == -1)
+                    {
+                        continue;
+                    }
                 }
                 else
                 {

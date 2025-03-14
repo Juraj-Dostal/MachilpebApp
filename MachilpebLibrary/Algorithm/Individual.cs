@@ -198,7 +198,15 @@ namespace MachilpebLibrary.Algorithm
 
         public int AddChargingPoint(BusStop busStop)
         {
-            return this._chargingPoint[this.FindBusStop(busStop)].Item2++;
+            if (this._chargingPoint[this.FindBusStop(busStop)].Item2 > 2)
+            {
+                return -1;
+            }
+
+            var point = this._chargingPoint[this.FindBusStop(busStop)].Item2++;
+            this.SimulateIndividual();
+
+            return point;
         }
 
         public int RemoveChargingPoint(BusStop busStop)
@@ -208,7 +216,10 @@ namespace MachilpebLibrary.Algorithm
                 return -1;
             }
 
-            return this._chargingPoint[this.FindBusStop(busStop)].Item2--;
+            var point = this._chargingPoint[this.FindBusStop(busStop)].Item2--;
+            this.SimulateIndividual();
+
+            return point;
         }
 
         public void SetChargingPoint(BusStop busStop, int value)
