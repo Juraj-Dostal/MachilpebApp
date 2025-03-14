@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MachilpebWPF"
         mc:Ignorable="d"
-        Title="Machilpeb" Height="555" Width="800">
+        Title="Machilpeb" Height="550" Width="400">
     <Grid>
 
         <Grid.RowDefinitions>
@@ -15,12 +15,12 @@
 
         <Grid>
 
-            <Grid.ColumnDefinitions>
+            <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>-->
 
-            <Grid Grid.Column="0" Margin="10">
+            <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -140,7 +140,7 @@
                         </Grid.ColumnDefinitions>
                         
                         <TextBlock Text="Generation count:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="GenerationCount" Text="100" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
+                        <TextBox Name="GenerationCount" Text="15" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
                         <TextBlock Text="" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
@@ -170,7 +170,7 @@
 
             </Grid>
             
-            <Grid Grid.Column="1" Margin="10">
+            <!--<Grid Grid.Column="1" Margin="10">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -245,7 +245,7 @@
                     <TextBlock Text="s" Margin="5, 0" FontSize="18" Grid.Column="2"/>
                 </Grid>
 
-            </Grid>
+            </Grid>-->
         </Grid>
         
         <Grid Grid.Row="1" Margin="10">

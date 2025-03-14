@@ -72,17 +72,23 @@ namespace MachilpebLibrary.Algorithm
             return probalityArray;
         }
 
-        //TODO: Implement this method
-        internal Individual[] ExtractBest(int i)
+        public Individual[] GetBest(int i)
         {
             var sorted = this._population.OrderBy(individual => individual.GetFitnessFun());
 
             return sorted.Take(i).ToArray();
         }
 
-        public Individual? GetBestIndividual()
+        public Individual GetBest()
+        { 
+            var sorted = this._population.OrderBy(individual => individual.GetFitnessFun());
+
+            return sorted.First();
+        }
+
+        public Individual? GetBestAcceptable ()
         {
-            return this._population.Where(individual => individual.GetCancelled() == 0).OrderBy(individual => individual.GetFitnessFun()).First();
+            return this._population.Where(individual => !individual.IsCancelled()).OrderBy(individual => individual.GetFitnessFun()).FirstOrDefault();
         }
     }
 }

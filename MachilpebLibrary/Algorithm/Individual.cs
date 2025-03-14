@@ -16,7 +16,7 @@ namespace MachilpebLibrary.Algorithm
         public static int PRICE_CHARGING_POINT { get; set; } // €
         public static int PRICE_PENALTY { get; set; } // €
 
-        private Random _rnd = new Random();
+        private Random _rnd = new();
 
         //string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\Log_Simulate_Individual.txt";
 
@@ -186,9 +186,29 @@ namespace MachilpebLibrary.Algorithm
             return this._cancelled;
         }
 
+        public bool IsCancelled()
+        {
+            return this._cancelled > 0;
+        }
+
         public (BusStop, int)[] GetSolution()
         {
             return this._chargingPoint.Where(c => c.Item2 > 0).ToArray();
+        }
+
+        public int AddChargingPoint(BusStop busStop)
+        {
+            return this._chargingPoint[this.FindBusStop(busStop)].Item2++;
+        }
+
+        public int RemoveChargingPoint(BusStop busStop)
+        {
+            if (this._chargingPoint[this.FindBusStop(busStop)].Item2 == 0)
+            {
+                return -1;
+            }
+
+            return this._chargingPoint[this.FindBusStop(busStop)].Item2--;
         }
 
         public void SetChargingPoint(BusStop busStop, int value)

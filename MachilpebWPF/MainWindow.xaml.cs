@@ -22,6 +22,8 @@ namespace MachilpebWPF
         {
             RunAlgorithmButton.IsEnabled = false;
 
+
+            // parametre sa nesmu zmenit riesenie toho isteho problemu
             Bus.BATTERY_CHARGING = double.Parse(BatteryCharging.Text);
             Bus.BATTERY_CONSUMPTION = double.Parse(BatteryConsumption.Text);
             Bus.BATTERY_CAPACITY = double.Parse(BatteryCapacity.Text);
@@ -36,38 +38,54 @@ namespace MachilpebWPF
             MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = double.Parse(ProbabilityLocalSearch.Text);
             MemeticAlgorithm.PROBABILITY_MUTATION = double.Parse(ProbabilityMutation.Text);
 
-
-            var stopWatch = new Stopwatch();
-
-            stopWatch.Start();
-
-            DataReader dataReader = DataReader.GetInstance();
-
-            var algoritm = new MemeticAlgorithm();
-
-            var bestIndividual = algoritm.MemeticSearch();
-
-            var solution = bestIndividual.GetSolution();
-
-            stopWatch.Stop();
-
-            var point = 0;
-
-            var solutionTuple = new List<Tuple<int, string, int>>();
-
-            foreach (var item in solution)
+            Thread newWindowThread = new Thread(new ThreadStart(() =>
             {
-                SolutionTable.Items.Add(new { Id = item.Item1.Id, Name = item.Item1.Name, Point = item.Item2 });
-                point += item.Item2;
-            }
+                // Create and show the secondary window
+                var solutionWindow = new SolutionWindow();
 
-            ChargingStationBlock.Text = solution.Length.ToString();
-            ChargingPointBlock.Text = point.ToString();
+                // Start the Dispatcher processing
+                System.Windows.Threading.Dispatcher.Run();
+            }));
 
-            TotalCostsBlock.Text = bestIndividual.GetObjectiveFun().ToString();
+            // Set the apartment state
+            newWindowThread.SetApartmentState(ApartmentState.STA);
 
-            var time = stopWatch.Elapsed;
-            TimeBlock.Text = time.TotalSeconds.ToString();
+            // Start the thread
+            newWindowThread.Start();
+
+            
+
+            //var stopWatch = new Stopwatch();
+
+            //stopWatch.Start();
+
+            //DataReader dataReader = DataReader.GetInstance();
+
+            //var algoritm = new MemeticAlgorithm();
+
+            //var bestIndividual = algoritm.MemeticSearch();
+
+            //var solution = bestIndividual.GetSolution();
+
+            //stopWatch.Stop();
+
+            //var point = 0;
+
+            //var solutionTuple = new List<Tuple<int, string, int>>();
+
+            //foreach (var item in solution)
+            //{
+            //    SolutionTable.Items.Add(new { Id = item.Item1.Id, Name = item.Item1.Name, Point = item.Item2 });
+            //    point += item.Item2;
+            //}
+
+            //ChargingStationBlock.Text = solution.Length.ToString();
+            //ChargingPointBlock.Text = point.ToString();
+
+            //TotalCostsBlock.Text = bestIndividual.GetObjectiveFun().ToString();
+
+            //var time = stopWatch.Elapsed;
+            //TimeBlock.Text = time.TotalSeconds.ToString();
 
             RunAlgorithmButton.IsEnabled = true;
 

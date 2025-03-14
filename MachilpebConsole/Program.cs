@@ -38,7 +38,7 @@ namespace MachilpebConsole
 
             Individual.PRICE_CHARGING_STATION = priceChargingStation;
             Individual.PRICE_CHARGING_POINT = priceChargingPoint;
-            Individual.PRICE_PENALTY = 2 * Individual.PRICE_CHARGING_STATION;
+            Individual.PRICE_PENALTY = 8 * Individual.PRICE_CHARGING_STATION;
 
             // treba dat pozor na poradie
             Population.POPULATION_SIZE = populationSize;
@@ -72,6 +72,16 @@ namespace MachilpebConsole
             Console.WriteLine("Pocet nabijacich stanic: " + solution.Length.ToString());
             Console.WriteLine("Pocet nabijacich bodov: " + point.ToString());
             Console.WriteLine("Cena nakladov: " + bestIndividual.GetObjectiveFun());
+
+            if (bestIndividual.IsCancelled())
+            {
+                Console.WriteLine(bestIndividual.GetCancelled() + " turnusov nedokoncilo svoju jazdu");
+            }
+            else
+            {
+                Console.WriteLine("Vsetky turnusy dokoncili jazdu");
+            }
+
             Console.WriteLine("Time: " + time.TotalSeconds + "s");
 
         }

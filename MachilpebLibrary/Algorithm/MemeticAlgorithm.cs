@@ -7,7 +7,7 @@ namespace MachilpebLibrary.Algorithm
     public class MemeticAlgorithm
     {
         //Konstanta
-        public static int GENERATION_COUNT { get; set; }
+        public static int GENERATION_COUNT { get; set; } // pocet generaci od posledneho zlepsenia
         public static int ELITE_COUNT = (int) Math.Round( Population.POPULATION_SIZE * 0.1); // best picked 
 
         public static int LOCAL_SEARCH_ITERATION = 15;
@@ -36,10 +36,26 @@ namespace MachilpebLibrary.Algorithm
         public Individual MemeticSearch()
         {
             GenerateInitialPop();
+
+            var lastBest = this._population.GetBest();
+
             for (int i = 0; i < GENERATION_COUNT; i++) 
             {
                 var pop = this.GenerateNextPopulation();
                 this._population = pop;
+
+                var best = this._population.GetBestAcceptable();
+
+                if (best == null)
+                {
+                    best = this._population.GetBest();
+                }
+
+                if (lastBest.GetFitnessFun() < best.GetFitnessFun())
+                {
+                    lastBest = best;
+                    i = -1;
+                }
 
                 if (false) // podmienka pre skonvergovanie nezlepsenie fitness funkcie
                 {
@@ -47,7 +63,7 @@ namespace MachilpebLibrary.Algorithm
                 }
             } 
 
-            return this._population.ExtractBest(1)[0];
+            return this._population.GetBest();
         }
 
         /*
@@ -82,7 +98,7 @@ namespace MachilpebLibrary.Algorithm
             var newPop = new Population(this._population);
 
             // elitna skupina 
-            var elite = this._population.ExtractBest(ELITE_COUNT);
+            var elite = this._population.GetBest(ELITE_COUNT);
             newPop.SetIndividuals(elite);
 
             var children = Crossover();
@@ -201,7 +217,7 @@ namespace MachilpebLibrary.Algorithm
 
             var preserved = (int) Math.Round( Population.POPULATION_SIZE * PRESERVE);
 
-            newPop.SetIndividuals(this._population.ExtractBest(preserved));
+            newPop.SetIndividuals(this._population.GetBest(preserved));
 
             //for (int i = 0; i < preserved; i++)
             //{
@@ -226,10 +242,28 @@ namespace MachilpebLibrary.Algorithm
         {
             var actualIndividual = individual;
                      
-            // condition = Opakuje sa vopred urcenych m pocet iteracii, kde sa nenaslo zlepsenie v poslednych m iteraciach
-            for (int i = 0; i < LOCAL_SEARCH_ITERATION ; i++)
+            // condition = Opakuj dokym nevyskusas vsetky zmeni
+            for (int i = 0; i < BusStop.FINAL_BUSSTOPS.Count ; i++)
             {
-                var newIndividual = actualIndividual.GenerateNeighbour();
+                //var newIndividual = actualIndividual.GenerateNeighbour();
+                var newIndividual = new Individual(actualIndividual);
+                var busStop = BusStop.FINAL_BUSSTOPS[i];
+
+                if (actualIndividual.IsCancelled()) {
+                    // pridanie nabijacich bodov
+                    newIndividual.AddChargingPoint(busStop);
+
+                }
+                else
+                {
+                    // odobratie nabijacich bodov
+                    var actualPoint = newIndividual.RemoveChargingPoint(busStop);
+
+                    if (actualPoint == -1)
+                    {
+                        continue;
+                    }
+                }
 
                 if (actualIndividual.GetFitnessFun() > newIndividual.GetFitnessFun())
                 {
