@@ -56,7 +56,6 @@ namespace MachilpebWPF
 
 
             RunAlgorithmButton.IsEnabled = true;
-
         }
 
         private void DisableChange()

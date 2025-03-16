@@ -38,7 +38,7 @@ namespace MachilpebConsole
 
             Individual.PRICE_CHARGING_STATION = priceChargingStation;
             Individual.PRICE_CHARGING_POINT = priceChargingPoint;
-            Individual.PRICE_PENALTY = 8 * Individual.PRICE_CHARGING_STATION;
+            Individual.PRICE_PENALTY = 2 * Individual.PRICE_CHARGING_STATION;
 
             // treba dat pozor na poradie
             Population.POPULATION_SIZE = populationSize;
