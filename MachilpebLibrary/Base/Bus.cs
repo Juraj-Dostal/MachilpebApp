@@ -214,7 +214,7 @@ namespace MachilpebLibrary.Base
 
         }
 
-        public void calculateDistance()
+        public void CalculateDistance()
         {
 
             // Ak startovacie depo je rovnako ako zacina autobus tak da 0
@@ -333,7 +333,7 @@ namespace MachilpebLibrary.Base
             var values = line.Split(';');
             var id = int.Parse(values[0]);
             var shift = values[1];
-            var day = getDay(values[2]);
+            var day = GetDay(values[2]);
 
             return new Bus(id, shift, day);
         }
@@ -343,7 +343,7 @@ namespace MachilpebLibrary.Base
             return (int)Math.Round(relocationDistance / (RELOCATION_SPEED * 1000.0 / 60.0)); 
         }
 
-        private static DayOfWeek getDay(string date)
+        private static DayOfWeek GetDay(string date)
         {
             int value = int.Parse(date.Substring(date.Length - 1));
 

@@ -13,8 +13,6 @@ namespace MachilpebLibrary.Simulation
     {
         public static int BREAK_TIME = 4; // minute
 
-        string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\Log_Simulate.txt";
-
         private ImmutableList<Bus> _buses;
         // kalendar udalosti kde prirota je cas a element je udalost
         private readonly PriorityQueue<Event, int> _eventCalendar;
@@ -30,7 +28,7 @@ namespace MachilpebLibrary.Simulation
 
 
         // vrati pocet nedokoncenych turnusov
-        public int simulate()
+        public int Simulate()
         {
             var cancalled = 0;
 
@@ -47,21 +45,18 @@ namespace MachilpebLibrary.Simulation
                     Event currentEvent = this._eventCalendar.Dequeue();
                     currentEvent.Trigger();
 
-                    //writer.Write(currentEvent.ToString());
-
                     if (currentEvent.Bus.IsBatteryEmpty())
                     {
                         cancalled++;
                         continue;
                     }
 
-                    if (currentEvent is ArriveEvent)
+                    if (currentEvent is ArriveEvent @event)
                     {
-                        this.PlanNextEvent((ArriveEvent)currentEvent);
+                        this.PlanNextEvent(@event);
                     }
                 }
             }
-            //}
 
             return cancalled;
         }
@@ -85,11 +80,11 @@ namespace MachilpebLibrary.Simulation
 
                 if (relocation != null)
                 { 
-                    var relocationEvent = new RelocationEvent(bus, relocation.BusStop, relocation.Time ,lineSchedule.GetFirstBusStopSchedule().BusStop);
+                    var relocationEvent = new RelocationEvent(bus, relocation.BusStop, lineSchedule.GetFirstBusStopSchedule().BusStop);
                     this._eventCalendar.Enqueue(relocationEvent, relocation.Time);
                 }
 
-                var arriveEvent = new ArriveEvent(bus, lineSchedule.GetLastBusStopSchedule().BusStop, lineSchedule.GetEndTime(), lineSchedule);
+                var arriveEvent = new ArriveEvent(bus, lineSchedule.GetLastBusStopSchedule().BusStop, lineSchedule);
                 this._eventCalendar.Enqueue(arriveEvent, lineSchedule.GetEndTime());
             }
         }
@@ -116,12 +111,12 @@ namespace MachilpebLibrary.Simulation
                 if (this._individual.IsChargingPointFree(actualBusStop))
                 {
                     var endTime = bus.GetEndDepo().Time - relocationTime;
-                    var chargingEvent = new ChargingEvent(bus, actualBusStop, this._individual, endTime, lineSchedule.GetEndTime(), endTime);
+                    var chargingEvent = new ChargingEvent(bus, actualBusStop, this._individual, lineSchedule.GetEndTime(), endTime);
                     this._eventCalendar.Enqueue(chargingEvent, endTime);
                 }
 
 
-                var relocationEvent = new RelocationEvent(bus, actualBusStop, bus.GetEndDepo().Time,  bus.GetEndDepo().BusStop);
+                var relocationEvent = new RelocationEvent(bus, actualBusStop, bus.GetEndDepo().BusStop);
                 this._eventCalendar.Enqueue(relocationEvent, bus.GetEndDepo().Time);
                 return;
             }
@@ -134,7 +129,7 @@ namespace MachilpebLibrary.Simulation
             {
                 if (breakTime > BREAK_TIME && this._individual.IsChargingPointFree(actualBusStop))
                 {
-                    var chargingEvent = new ChargingEvent(bus, actualBusStop, this._individual, nextLineSchedule.GetStartTime(), lineSchedule.GetEndTime(), nextLineSchedule.GetStartTime());
+                    var chargingEvent = new ChargingEvent(bus, actualBusStop, this._individual, lineSchedule.GetEndTime(), nextLineSchedule.GetStartTime());
                     this._eventCalendar.Enqueue(chargingEvent, nextLineSchedule.GetStartTime());
 
                     this._individual.UseChargingPoint(actualBusStop);
@@ -155,9 +150,9 @@ namespace MachilpebLibrary.Simulation
                     {
                         var endRelocationTime = lineSchedule.GetEndTime() + relocationTime;
 
-                        var relocationEvent = new RelocationEvent(bus, actualBusStop, endRelocationTime, nextBusStop);
+                        var relocationEvent = new RelocationEvent(bus, actualBusStop, nextBusStop);
                         this._eventCalendar.Enqueue(relocationEvent, endRelocationTime);
-                        var chargingEvent = new ChargingEvent(bus, nextBusStop, this._individual, nextLineSchedule.GetStartTime(), endRelocationTime, nextLineSchedule.GetStartTime());
+                        var chargingEvent = new ChargingEvent(bus, nextBusStop, this._individual, endRelocationTime, nextLineSchedule.GetStartTime());
                         this._eventCalendar.Enqueue(chargingEvent, nextLineSchedule.GetStartTime());
 
                         this._individual.UseChargingPoint(nextBusStop);
@@ -166,9 +161,9 @@ namespace MachilpebLibrary.Simulation
                     {
                         var endChargingTime = nextLineSchedule.GetStartTime() - relocationTime;
 
-                        var chargingEvent = new ChargingEvent(bus, actualBusStop, this._individual, endChargingTime, lineSchedule.GetEndTime(), endChargingTime);
+                        var chargingEvent = new ChargingEvent(bus, actualBusStop, this._individual, lineSchedule.GetEndTime(), endChargingTime);
                         this._eventCalendar.Enqueue(chargingEvent, endChargingTime);
-                        var relocationEvent = new RelocationEvent(bus, actualBusStop, nextLineSchedule.GetStartTime(), nextBusStop);
+                        var relocationEvent = new RelocationEvent(bus, actualBusStop, nextBusStop);
                         this._eventCalendar.Enqueue(relocationEvent, nextLineSchedule.GetStartTime());
 
                         this._individual.UseChargingPoint(actualBusStop);
@@ -177,13 +172,13 @@ namespace MachilpebLibrary.Simulation
                 }
                 else 
                 {
-                    var relocationEvent = new RelocationEvent(bus, actualBusStop, nextLineSchedule.GetStartTime(), nextBusStop);
+                    var relocationEvent = new RelocationEvent(bus, actualBusStop, nextBusStop);
                     this._eventCalendar.Enqueue(relocationEvent, nextLineSchedule.GetStartTime());
                 }
 
             }
 
-            var arriveEvent = new ArriveEvent(bus, nextLineSchedule.GetLastBusStopSchedule().BusStop, nextLineSchedule.GetEndTime(), nextLineSchedule);
+            var arriveEvent = new ArriveEvent(bus, nextLineSchedule.GetLastBusStopSchedule().BusStop, nextLineSchedule);
             this._eventCalendar.Enqueue(arriveEvent, nextLineSchedule.GetEndTime());
         }
 

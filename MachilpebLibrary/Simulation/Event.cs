@@ -26,15 +26,12 @@ namespace MachilpebLibrary.Simulation
     public abstract class Event
     {
         public Bus Bus { get; }
-        public BusStop BusStop { get; }
-        public int Priority { get; }
-    
+        public BusStop BusStop { get; }    
 
-        public Event(Bus bus, BusStop busStop, int priority)
+        public Event(Bus bus, BusStop busStop)
         {
             this.Bus = bus;
             this.BusStop = busStop;
-            this.Priority = priority;
         }
 
         public abstract void Trigger();
@@ -46,7 +43,7 @@ namespace MachilpebLibrary.Simulation
     {
         public LineSchedule LineSchedule { get; }
 
-        public ArriveEvent(Bus bus, BusStop busStop, int priority, LineSchedule lineSchedule) : base(bus, busStop, priority)
+        public ArriveEvent(Bus bus, BusStop busStop, LineSchedule lineSchedule) : base(bus, busStop)
         {
             this.LineSchedule = lineSchedule;
         }
@@ -58,7 +55,7 @@ namespace MachilpebLibrary.Simulation
 
         public override string? ToString()
         {
-            return this.Priority + " | ArriveEvent: " + this.Bus.ToString() + " BusStop: " + this.BusStop.Name + "\n";
+            return "ArriveEvent: " + this.Bus.ToString() + " BusStop: " + this.BusStop.Name + "\n";
         }
     }
 
@@ -69,7 +66,7 @@ namespace MachilpebLibrary.Simulation
         public int StartTime { get; }
         public int EndTime { get; set; }
 
-        public ChargingEvent(Bus bus, BusStop busStop, Individual individual , int priority, int startTime, int endTime ) : base(bus, busStop, priority)
+        public ChargingEvent(Bus bus, BusStop busStop, Individual individual , int startTime, int endTime ) : base(bus, busStop)
         {
             this.StartTime = startTime;
             this.EndTime = endTime;
@@ -84,7 +81,7 @@ namespace MachilpebLibrary.Simulation
 
         public override string? ToString()
         {
-            return this.Priority + " | ChargingEvent " + this.Bus.ToString() + " BusStop: " + this.BusStop.Name + "Time" + this.StartTime + "-" + this.EndTime + "\n";
+            return "ChargingEvent " + this.Bus.ToString() + " BusStop: " + this.BusStop.Name + "Time" + this.StartTime + "-" + this.EndTime + "\n";
         }
     }
 
@@ -92,7 +89,7 @@ namespace MachilpebLibrary.Simulation
     {
         public BusStop Destination { get; }
 
-        public RelocationEvent(Bus bus, BusStop busStop, int priority, BusStop destination) : base(bus, busStop, priority)
+        public RelocationEvent(Bus bus, BusStop busStop, BusStop destination) : base(bus, busStop)
         {
             this.Destination = destination;
         }
@@ -104,7 +101,7 @@ namespace MachilpebLibrary.Simulation
 
         public override string? ToString()
         {
-            return this.Priority + " | RelocationEvent: " + this.Bus.ToString() + " BusStop: " + this.BusStop.Name + " Destination: " + this.Destination.Name + "\n";
+            return "RelocationEvent: " + this.Bus.ToString() + " BusStop: " + this.BusStop.Name + " Destination: " + this.Destination.Name + "\n";
         }
     }
 }

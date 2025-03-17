@@ -16,15 +16,12 @@ namespace MachilpebLibrary.Algorithm
         public static int PRICE_CHARGING_POINT { get; set; } // €
         public static int PRICE_PENALTY { get; set; } // €
 
-        private Random _rnd = new();
-
-        //string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\Log_Simulate_Individual.txt";
-
         // vektor nabijacich bodov (zastavka, pocet nabijajucich bodov)
         private (BusStop, int)[] _chargingPoint;
         private (BusStop, int)[] _usedChargingPoint;
 
         // atribute potrebne pre algoritmus
+        private Random _rnd = new();
         private int _cancelled = 0; // pocet neuskutocnenych turnusov
 
         public Individual()
@@ -65,8 +62,6 @@ namespace MachilpebLibrary.Algorithm
         public Individual((BusStop, int)[] chargingPoint)
         {
             this._chargingPoint = chargingPoint;
-
-            var busStop = DataReader.GetInstance().GetBusStop();
 
             this._usedChargingPoint = new (BusStop, int)[chargingPoint.Length];
 
@@ -293,15 +288,13 @@ namespace MachilpebLibrary.Algorithm
                 this._chargingPoint[bs].Item2 = this._rnd.Next(1, 3);
 
                 i++;
-
-                //File.AppendAllText(route, this._chargingPoint[bs].Item1.Id + " " + this._chargingPoint[bs].Item1.Name + " " + this._chargingPoint[bs].Item2 + "\n");
             }
         }
 
         private void SimulateIndividual()
         {
             var simulation = new DiscreteEventSimulation(this);
-            this._cancelled = simulation.simulate();
+            this._cancelled = simulation.Simulate();
         }
 
         public override string? ToString()
@@ -321,6 +314,10 @@ namespace MachilpebLibrary.Algorithm
         {
             return obj is Individual individual && EqualityComparer<(BusStop, int)[]>.Default.Equals(_chargingPoint, individual._chargingPoint);
         }
-       
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_chargingPoint);
+        }
     }
 }

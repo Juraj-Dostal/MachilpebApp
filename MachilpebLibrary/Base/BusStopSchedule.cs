@@ -46,9 +46,7 @@ namespace MachilpebLibrary.Base
 
         public override bool Equals(object? obj)
         {
-            BusStopSchedule? other = obj as BusStopSchedule;
-
-            if (other == null)
+            if (obj is not BusStopSchedule other)
             {
                 return false;
             }

@@ -87,9 +87,7 @@ namespace MachilpebLibrary.Base
 
         public override bool Equals(object? obj)
         {
-            LineSchedule? other = obj as LineSchedule;
-
-            if (other == null)
+            if (obj is not LineSchedule other)
             {
                 return false;
             }
@@ -161,34 +159,26 @@ namespace MachilpebLibrary.Base
                 }
                 else if (3 < code && code < 12)
                 {
-                    operates.Add(getDay(code));
+                    operates.Add(GetDay(code));
                 }
             }
 
             return new LineSchedule(id, lineId, shift, operates);
         }
 
-        public static DayOfWeek getDay(int code)
+        public static DayOfWeek GetDay(int code)
         {
-            switch (code)
+            return code switch
             {
-                case 7:
-                    return DayOfWeek.Monday;
-                case 8:
-                    return DayOfWeek.Tuesday;
-                case 9:
-                    return DayOfWeek.Wednesday;
-                case 10:
-                    return DayOfWeek.Thursday;
-                case 11:
-                    return DayOfWeek.Friday;
-                case 5:
-                    return DayOfWeek.Saturday;
-                case 4:
-                    return DayOfWeek.Sunday;
-                default:
-                    throw new Exception("Invalid day");
-            }
+                7 => DayOfWeek.Monday,
+                8 => DayOfWeek.Tuesday,
+                9 => DayOfWeek.Wednesday,
+                10 => DayOfWeek.Thursday,
+                11 => DayOfWeek.Friday,
+                5 => DayOfWeek.Saturday,
+                4 => DayOfWeek.Sunday,
+                _ => throw new Exception("Invalid day"),
+            };
         }
 
         

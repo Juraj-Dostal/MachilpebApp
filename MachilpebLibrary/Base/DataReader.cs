@@ -21,7 +21,7 @@ namespace MachilpebLibrary.Base
 
         private DataReader()
         {
-            string route = "C:\\Users\\webju\\OneDrive - Žilinská univerzita v Žiline\\Bakalarska praca\\data\\";
+            string route = ".\\data\\";
 
             _busList = [];
             _shiftList = [];
@@ -65,22 +65,22 @@ namespace MachilpebLibrary.Base
             foreach (var bus in _busList)
             {
                 sb.Append(bus.ToString());
-                sb.Append("\n");
+                sb.Append('\n');
             }
 
-            sb.Append("\n");
+            sb.Append('\n');
 
             foreach (var shift in _shiftList)
             {
                 sb.Append(shift.ToString());
-                sb.Append("\n");
+                sb.Append('\n');
             }
 
 
             foreach (var busStop in _busStopList)
             {
                 sb.Append(busStop.Name);
-                sb.Append("\n");
+                sb.Append('\n');
             }
 
             return sb.ToString();
@@ -128,7 +128,7 @@ namespace MachilpebLibrary.Base
 
             foreach (var bus in _busList)
             {
-                bus.calculateDistance();
+                bus.CalculateDistance();
             }
 
             foreach (var bus in _busList)
@@ -244,7 +244,7 @@ namespace MachilpebLibrary.Base
 
                     if (lineSchedules != null && oldBss != null)
                     {
-                        setLastBusSTopSchedule(lineSchedules, oldBss);
+                        SetLastBusSTopSchedule(lineSchedules, oldBss);
                     }
 
                     lineSchedules = _lineSchedulesList.Where(ls => ls.Id == newId && ls.LineId == newLineId).ToList();
@@ -272,11 +272,11 @@ namespace MachilpebLibrary.Base
 
             if (lineSchedules != null && oldBss != null)
             {
-                setLastBusSTopSchedule(lineSchedules, oldBss);
+                SetLastBusSTopSchedule(lineSchedules, oldBss);
             }
         }
 
-        private void setLastBusSTopSchedule(List<LineSchedule> lineSchedules, BusStopSchedule bss)
+        private void SetLastBusSTopSchedule(List<LineSchedule> lineSchedules, BusStopSchedule bss)
         {
             foreach (var ls in lineSchedules)
             {
