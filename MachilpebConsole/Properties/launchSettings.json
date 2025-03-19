@@ -2,7 +2,7 @@
   "profiles": {
     "MachilpebConsole": {
       "commandName": "Project",
-      "commandLineArgs": "--population-size=50 --generation-count=50 --probability-local-search=0,65 --probability-mutation=0,35"
+      "commandLineArgs": "--population-size=10 --generation-count=15 --probability-local-search=0,25 --probability-mutation=0,1"
     }
   }
 }

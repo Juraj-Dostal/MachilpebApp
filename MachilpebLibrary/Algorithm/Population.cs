@@ -21,14 +21,11 @@ namespace MachilpebLibrary.Algorithm
         public Population(Population population)
         {
             this._population = new Individual[POPULATION_SIZE];
-            for (int i = 0; i < population._population.Length; i++)
-            {
-                this._population[i] = new Individual(population._population[i]);
-            }
         }
 
         public void SetIndividual(Individual individual)
-        { 
+        {
+            var assigned = false;
             for (int i = 0; i < this._population.Length; i++) 
             {
                 if (this._population[i] != null)
@@ -37,7 +34,13 @@ namespace MachilpebLibrary.Algorithm
                 }
 
                 this._population[i] = individual;
+                assigned = true;
                 break;
+            }
+
+            if (!assigned)
+            {
+                throw new Exception("Individual not assigned!");
             }
         }
 
