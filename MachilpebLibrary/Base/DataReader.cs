@@ -21,7 +21,7 @@ namespace MachilpebLibrary.Base
 
         private DataReader()
         {
-            string route = ".\\data\\";
+            string route = "./data/";
 
             _busList = [];
             _shiftList = [];
