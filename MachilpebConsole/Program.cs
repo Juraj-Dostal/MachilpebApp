@@ -2,6 +2,8 @@
 using MachilpebLibrary.Base;
 using MachilpebLibrary.Simulation;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace MachilpebConsole
@@ -13,7 +15,7 @@ namespace MachilpebConsole
         /// Memetic algorithm for charging infrastructure location problem for electric buses
         /// </summary>
         /// <param name="populationSize">Number of individuals in population (pcs)</param>
-        /// <param name="generationCount">Number of generations of the population (pcs)</param>
+        /// <param name="terminationCriterion">Number of generate generations without better solution (pcs)</param>
         /// <param name="probabilityLocalSearch">Probability of Local Search algorithm execution per individual</param>
         /// <param name="probabilityMutation">Probability of mutation execution per individual</param>
         /// <param name="batteryCharging">Battery charging speed (kWh/min)</param>
@@ -21,13 +23,13 @@ namespace MachilpebConsole
         /// <param name="batteryCapacity">Battery capacity (kWh)</param>
         /// <param name="priceChargingStation">Cost of building one charging station (Euro)</param>
         /// <param name="priceChargingPoint">Cost of building one charging station (Euro)</param>
-
+        
         static void Main(int populationSize,
-            int generationCount,
+            int terminationCriterion,
             double probabilityLocalSearch,
             double probabilityMutation,
-            double batteryCharging = 1.33, 
-            double batteryConsumption = 0.8, 
+            double batteryCharging = 1.33,
+            double batteryConsumption = 0.8,
             double batteryCapacity = 140,
             int priceChargingStation = 50000,
             int priceChargingPoint = 2500)
@@ -40,49 +42,81 @@ namespace MachilpebConsole
             Individual.PRICE_CHARGING_POINT = priceChargingPoint;
             Individual.PRICE_PENALTY = 2 * Individual.PRICE_CHARGING_STATION;
 
-            // treba dat pozor na poradie
-            Population.POPULATION_SIZE = populationSize;
-            MemeticAlgorithm.GENERATION_COUNT = generationCount;
-            MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = probabilityLocalSearch;
-            MemeticAlgorithm.PROBABILITY_MUTATION = probabilityMutation;  
+            var populationSizeArray = new[] { 50, 30, 75, 100, 150 };
+            var terminationCriterionArray = new[] { 10, 15, 25, 50, 100 };
+            var probabilityLocalSearchArray = new[] { 0.35, 0, 0.2, 0.5, 0.75, 1 };
+            var probabilityMutationArray = new[] { 0.05, 0, 0.1, 0.15, 0.2, 0.4 };
+
+
+            if (populationSize == -1)
+            {
+                foreach (var item in populationSizeArray)
+                {
+                    File.AppendAllText("./data(populationSize).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
+                    FindBestParameters("./data(populationSize).csv", item, terminationCriterion, probabilityLocalSearch, probabilityMutation);
+                }
+            }
+
+            if (terminationCriterion == -1)
+            {
+                foreach (var item in terminationCriterionArray)
+                {
+                    File.AppendAllText("./data(terminationCriterion).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
+                    FindBestParameters("./data(terminationCriterion).csv", populationSize, item, probabilityLocalSearch, probabilityMutation);
+                }
+            }
+
+            if (probabilityLocalSearch == -1)
+            {
+                foreach (var item in probabilityLocalSearchArray)
+                {
+                    File.AppendAllText("./data(probabilityLocalSearch).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
+                    FindBestParameters("./data(probabilityLocalSearch).csv", populationSize, terminationCriterion, item, probabilityMutation);
+                }
+            }
+
+            if (probabilityMutation == -1)
+            {
+                foreach (var item in probabilityMutationArray)
+                {
+                    File.AppendAllText("./data(probabilityMutation).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
+                    FindBestParameters("./data(probabilityMutation).csv", populationSize, terminationCriterion, probabilityLocalSearch, item);
+                }
+            }
+        }
+
+        // priemerna ucelova funkcia, min ucelova funkcia, priemer pocet nedokoncenych turnusov, priemer doba pocitania
+        private static void FindBestParameters(string path ,int populationSize, int terminationCritetion, double probabilityLocalSearch, double probabilityMutation)
+        {
             
-            var stopWatch = new Stopwatch();
+            Population.POPULATION_SIZE = populationSize;
+            MemeticAlgorithm.GENERATION_COUNT = terminationCritetion;
+            MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = probabilityLocalSearch;
+            MemeticAlgorithm.PROBABILITY_MUTATION = probabilityMutation;
 
-            stopWatch.Start();
+            File.AppendAllText(path, ";;;\n");
+            File.AppendAllText(path, populationSize + ";" + terminationCritetion + ";" + probabilityLocalSearch + ";" + probabilityMutation + "\n");
+            File.AppendAllText(path, ";;;\n");
 
-            DataReader dataReader = DataReader.GetInstance();
-
-            var algoritm = new MemeticAlgorithm();
-
-            var bestIndividual = algoritm.MemeticSearch();
-
-            stopWatch.Stop();
-            var time = stopWatch.Elapsed;
-
-            var solution = bestIndividual.GetSolution();
-
-            var point = 0;
-
-            foreach (var item in solution)
+            for (int i = 0; i < 10; i++)
             {
-                Console.WriteLine(item.Item1.Id + " " + item.Item1.Name + " " + item.Item2);
-                point += item.Item2;
-            }
+                var stopWatch = new Stopwatch();
 
-            Console.WriteLine("Pocet nabijacich stanic: " + solution.Length.ToString());
-            Console.WriteLine("Pocet nabijacich bodov: " + point.ToString());
-            Console.WriteLine("Cena nakladov: " + bestIndividual.GetObjectiveFun());
+                stopWatch.Start();
 
-            if (bestIndividual.IsCancelled())
-            {
-                Console.WriteLine(bestIndividual.GetCancelled() + " turnusov nedokoncilo svoju jazdu");
-            }
-            else
-            {
-                Console.WriteLine("Vsetky turnusy dokoncili jazdu");
-            }
+                DataReader dataReader = DataReader.GetInstance();
 
-            Console.WriteLine("Time: " + time.TotalSeconds + "s");
+                var algoritm = new MemeticAlgorithm();
+
+                var bestIndividual = algoritm.MemeticSearch();
+
+                stopWatch.Stop();
+
+                var time = stopWatch.Elapsed;
+
+                File.AppendAllText(path, bestIndividual.GetObjectiveFun() + ";" + bestIndividual.GetCancelled() + ";" + time.TotalSeconds + "\n");
+
+            }
 
         }
     }
