@@ -50,36 +50,40 @@ namespace MachilpebConsole
 
             if (populationSize == -1)
             {
+                File.AppendAllText("./data(populationSize).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
                 foreach (var item in populationSizeArray)
                 {
-                    File.AppendAllText("./data(populationSize).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
+                    
                     FindBestParameters("./data(populationSize).csv", item, terminationCriterion, probabilityLocalSearch, probabilityMutation);
                 }
             }
 
             if (terminationCriterion == -1)
             {
+                File.AppendAllText("./data(terminationCriterion).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
                 foreach (var item in terminationCriterionArray)
                 {
-                    File.AppendAllText("./data(terminationCriterion).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
+                    
                     FindBestParameters("./data(terminationCriterion).csv", populationSize, item, probabilityLocalSearch, probabilityMutation);
                 }
             }
 
             if (probabilityLocalSearch == -1)
             {
+                File.AppendAllText("./data(probabilityLocalSearch).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
                 foreach (var item in probabilityLocalSearchArray)
                 {
-                    File.AppendAllText("./data(probabilityLocalSearch).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
+                   
                     FindBestParameters("./data(probabilityLocalSearch).csv", populationSize, terminationCriterion, item, probabilityMutation);
                 }
             }
 
             if (probabilityMutation == -1)
             {
+                File.AppendAllText("./data(probabilityMutation).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
                 foreach (var item in probabilityMutationArray)
                 {
-                    File.AppendAllText("./data(probabilityMutation).csv", "Population size;Termination criterion;Probability local search;Probability mutation\n");
+                    
                     FindBestParameters("./data(probabilityMutation).csv", populationSize, terminationCriterion, probabilityLocalSearch, item);
                 }
             }
@@ -90,12 +94,14 @@ namespace MachilpebConsole
         {
             
             Population.POPULATION_SIZE = populationSize;
+            MemeticAlgorithm.ELITE_COUNT = (int)Math.Round(Population.POPULATION_SIZE * 0.1); 
             MemeticAlgorithm.GENERATION_COUNT = terminationCritetion;
             MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = probabilityLocalSearch;
             MemeticAlgorithm.PROBABILITY_MUTATION = probabilityMutation;
 
             File.AppendAllText(path, ";;;\n");
             File.AppendAllText(path, populationSize + ";" + terminationCritetion + ";" + probabilityLocalSearch + ";" + probabilityMutation + "\n");
+            File.AppendAllText(path, MemeticAlgorithm.ELITE_COUNT + "\n");
             File.AppendAllText(path, ";;;\n");
 
             for (int i = 0; i < 10; i++)

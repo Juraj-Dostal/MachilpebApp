@@ -32,27 +32,27 @@ namespace MachilpebLibrary.Simulation
         {
             var cancalled = 0;
 
-            //foreach (Base.DayOfWeek day in Enum.GetValues(typeof(Base.DayOfWeek)))
-            //{
-            InitSimulate(Base.DayOfWeek.Monday);
-
-            while (_eventCalendar.Count > 0)
+            foreach (Base.DayOfWeek day in Enum.GetValues(typeof(Base.DayOfWeek)))
             {
-                Event currentEvent = this._eventCalendar.Dequeue();
-                currentEvent.Trigger();
+                InitSimulate(day);
 
-                if (currentEvent.Bus.IsBatteryEmpty())
+                while (_eventCalendar.Count > 0)
                 {
-                    cancalled++;
-                    continue;
-                }
+                    Event currentEvent = this._eventCalendar.Dequeue();
+                    currentEvent.Trigger();
 
-                if (currentEvent is ArriveEvent @event)
-                {
-                    this.PlanNextEvent(@event);
+                    if (currentEvent.Bus.IsBatteryEmpty())
+                    {
+                        cancalled++;
+                        continue;
+                    }
+
+                    if (currentEvent is ArriveEvent @event)
+                    {
+                        this.PlanNextEvent(@event);
+                    }
                 }
             }
-            //}
 
             return cancalled;
         }
