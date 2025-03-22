@@ -21,11 +21,12 @@ namespace MachilpebLibrary.Algorithm
         private (BusStop, int)[] _usedChargingPoint;
 
         // atribute potrebne pre algoritmus
-        private Random _rnd = new();
+        private Random _rnd;
         private int _cancelled = 0; // pocet neuskutocnenych turnusov
 
         public Individual()
         {
+            this._rnd = new Random();
             var busStop = BusStop.FINAL_BUSSTOPS;
 
             this._chargingPoint = new (BusStop, int)[busStop.Count];
@@ -46,7 +47,7 @@ namespace MachilpebLibrary.Algorithm
 
         public Individual(Individual individual)
         {
-
+            this._rnd = new Random();
             this._chargingPoint = new (BusStop, int)[individual._chargingPoint.Length];
             this._usedChargingPoint = new (BusStop, int)[individual._chargingPoint.Length];
 
@@ -61,6 +62,7 @@ namespace MachilpebLibrary.Algorithm
 
         public Individual((BusStop, int)[] chargingPoint)
         {
+            this._rnd = new Random();
             this._chargingPoint = chargingPoint;
 
             this._usedChargingPoint = new (BusStop, int)[chargingPoint.Length];
@@ -75,6 +77,7 @@ namespace MachilpebLibrary.Algorithm
 
         public Individual(Individual firstParent, Individual secondParent, bool[] mask)
         {
+            this._rnd = new Random();
             this._chargingPoint = new (BusStop, int)[firstParent._chargingPoint.Length];
             this._usedChargingPoint = new (BusStop, int)[firstParent._chargingPoint.Length];
 

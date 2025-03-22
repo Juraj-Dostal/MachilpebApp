@@ -1,6 +1,5 @@
 ﻿using MachilpebLibrary.Algorithm;
 using MachilpebLibrary.Base;
-using MachilpebLibrary.Simulation;
 using System.Diagnostics;
 using System.Text;
 
@@ -13,7 +12,7 @@ namespace MachilpebConsole
         /// Memetic algorithm for charging infrastructure location problem for electric buses
         /// </summary>
         /// <param name="populationSize">Number of individuals in population (pcs)</param>
-        /// <param name="generationCount">Number of generations of the population (pcs)</param>
+        /// <param name="terminationCriterion">Number of generated generations without better solution (pcs)</param>
         /// <param name="probabilityLocalSearch">Probability of Local Search algorithm execution per individual</param>
         /// <param name="probabilityMutation">Probability of mutation execution per individual</param>
         /// <param name="batteryCharging">Battery charging speed (kWh/min)</param>
@@ -23,7 +22,7 @@ namespace MachilpebConsole
         /// <param name="priceChargingPoint">Cost of building one charging station (Euro)</param>
 
         static void Main(int populationSize,
-            int generationCount,
+            int terminationCriterion,
             double probabilityLocalSearch,
             double probabilityMutation,
             double batteryCharging = 1.33, 
@@ -42,18 +41,15 @@ namespace MachilpebConsole
 
             // treba dat pozor na poradie
             Population.POPULATION_SIZE = populationSize;
-            MemeticAlgorithm.GENERATION_COUNT = generationCount;
+            MemeticAlgorithm.TERMINATION_CRITERION = terminationCriterion;
             MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = probabilityLocalSearch;
             MemeticAlgorithm.PROBABILITY_MUTATION = probabilityMutation;  
             
             var stopWatch = new Stopwatch();
-
             stopWatch.Start();
 
             DataReader dataReader = DataReader.GetInstance();
-
             var algoritm = new MemeticAlgorithm();
-
             var bestIndividual = algoritm.MemeticSearch();
 
             stopWatch.Stop();

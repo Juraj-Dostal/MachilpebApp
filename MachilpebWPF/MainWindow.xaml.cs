@@ -37,7 +37,7 @@ namespace MachilpebWPF
             Individual.PRICE_PENALTY = 2 * Individual.PRICE_CHARGING_STATION;
 
             Population.POPULATION_SIZE = int.Parse(PopulationSize.Text);
-            MemeticAlgorithm.GENERATION_COUNT = int.Parse(GenerationCount.Text);
+            MemeticAlgorithm.TERMINATION_CRITERION = int.Parse(TerminationCriterion.Text);
 
             MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = double.Parse(ProbabilityLocalSearch.Text);
             MemeticAlgorithm.PROBABILITY_MUTATION = double.Parse(ProbabilityMutation.Text);
@@ -66,7 +66,7 @@ namespace MachilpebWPF
             PriceChargingStation.IsEnabled = false;
             PriceChargingPoint.IsEnabled = false;
             PopulationSize.IsEnabled = false;
-            GenerationCount.IsEnabled = false;
+            TerminationCriterion.IsEnabled = false;
             ProbabilityLocalSearch.IsEnabled = false;
             ProbabilityMutation.IsEnabled = false;
         }

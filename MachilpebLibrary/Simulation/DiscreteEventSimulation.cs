@@ -32,10 +32,6 @@ namespace MachilpebLibrary.Simulation
         {
             var cancalled = 0;
 
-            //zastavenie logovania
-            //using (var writer = File.CreateText(route))
-            //{
-
             foreach (Base.DayOfWeek day in Enum.GetValues(typeof(Base.DayOfWeek)))
             {
                 InitSimulate(day);

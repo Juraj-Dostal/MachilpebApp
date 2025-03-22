@@ -1,20 +1,8 @@
 ﻿using MachilpebLibrary.Algorithm;
 using MachilpebLibrary.Base;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace MachilpebWPF
 {
@@ -37,14 +25,12 @@ namespace MachilpebWPF
             DataReader dataReader = DataReader.GetInstance();
             var algoritm = new MemeticAlgorithm();
             var bestIndividual = algoritm.MemeticSearch();
-            var solution = bestIndividual.GetSolution();
 
             stopWatch.Stop();
-
-            // zobrazenie vysledkov
             
+            var solution = bestIndividual.GetSolution();
+            // zobrazenie vysledkov
             var point = 0;
-            var solutionTuple = new List<Tuple<int, string, int>>();
 
             foreach (var item in solution)
             {

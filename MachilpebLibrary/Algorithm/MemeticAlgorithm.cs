@@ -7,7 +7,7 @@ namespace MachilpebLibrary.Algorithm
     public class MemeticAlgorithm
     {
         //Konstanta
-        public static int GENERATION_COUNT { get; set; } // pocet generaci od posledneho zlepsenia
+        public static int TERMINATION_CRITERION { get; set; } // pocet generaci od posledneho zlepsenia
         public static int ELITE_COUNT = (int) Math.Round( Population.POPULATION_SIZE * 0.1); // best picked 
 
         public static int LOCAL_SEARCH_ITERATION = 15;
@@ -20,11 +20,12 @@ namespace MachilpebLibrary.Algorithm
         public static double PRESERVE = 0.1; // od <0,1> percento jedincov ktorych si nechame pri restarte
 
         private Population _population;
-        private Random _rnd = new();
+        private Random _rnd;
 
         public MemeticAlgorithm()
         {
-            _population = new Population();
+            this._population = new Population();
+            this._rnd = new Random();
         }
 
 
@@ -39,7 +40,7 @@ namespace MachilpebLibrary.Algorithm
 
             var lastBest = this._population.GetBest();
 
-            for (int i = 0; i < GENERATION_COUNT; i++) 
+            for (int i = 0; i < TERMINATION_CRITERION; i++) 
             {
                 var pop = this.GenerateNextPopulation();
                 this._population = pop;

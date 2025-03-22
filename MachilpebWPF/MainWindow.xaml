@@ -140,8 +140,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         
-                        <TextBlock Text="Generation count:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="GenerationCount" Text="15" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
+                        <TextBlock Text="Termination criterion:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
+                        <TextBox Name="TerminationCriterion" Text="15" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
                         <TextBlock Text="" FontSize="18" Grid.Column="2"/>
                     </Grid>
 
