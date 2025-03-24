@@ -47,11 +47,6 @@ namespace MachilpebConsole
             MemeticAlgorithm.PROBABILITY_LOCAL_SEARCH = probabilityLocalSearch;
             MemeticAlgorithm.PROBABILITY_MUTATION = probabilityMutation;
 
-            //var populationSizeArray = new[] { 50, 30, 75, 100, 150 };
-            //var terminationCriterionArray = new[] { 10, 15, 25, 50, 100 };
-            //var probabilityLocalSearchArray = new[] { 0.35, 0, 0.2, 0.5, 0.75, 1 };
-            //var probabilityMutationArray = new[] { 0.05, 0, 0.1, 0.15, 0.2, 0.4 };
-
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 

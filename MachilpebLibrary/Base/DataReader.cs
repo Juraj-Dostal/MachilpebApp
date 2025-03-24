@@ -36,6 +36,8 @@ namespace MachilpebLibrary.Base
             ReadData(route);
 
             EditAndControlData();
+
+            Console.WriteLine("DataReader created");
         }
 
         public static DataReader GetInstance()
