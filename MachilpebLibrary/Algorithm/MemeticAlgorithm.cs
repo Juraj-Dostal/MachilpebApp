@@ -33,11 +33,13 @@ namespace MachilpebLibrary.Algorithm
          * Tato metoda je zaklad memetickeho algoritmu
          * Hlavna metoda
          */
-        public Individual MemeticSearch()
+        public Individual[] MemeticSearch()
         {
             GenerateInitialPop();
 
             var lastBest = this._population.GetBest();
+            var individuals = new Individual[2];
+            individuals[0] = lastBest;
 
             for (int i = 0; i < GENERATION_COUNT; i++) 
             {
@@ -61,9 +63,11 @@ namespace MachilpebLibrary.Algorithm
                 {
                     this.RestartPopulation();
                 }
-            } 
+            }
 
-            return this._population.GetBest();
+            //return this._population.GetBest();
+            individuals[1] = this._population.GetBest();
+            return individuals;
         }
 
         /*
@@ -77,7 +81,11 @@ namespace MachilpebLibrary.Algorithm
             for (int i = 0; i < Population.POPULATION_SIZE; i++)
             {
                 var individual = new Individual();
-                individual = this.LocalSearch(individual);
+                if (this._rnd.NextDouble() < 0.1)
+                {
+                    individual = this.LocalSearch(individual);
+                }
+                //individual = this.LocalSearch(individual);
                 this._population.SetIndividual(individual);
             }
 

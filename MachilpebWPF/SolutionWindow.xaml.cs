@@ -37,7 +37,7 @@ namespace MachilpebWPF
             DataReader dataReader = DataReader.GetInstance();
             var algoritm = new MemeticAlgorithm();
             var bestIndividual = algoritm.MemeticSearch();
-            var solution = bestIndividual.GetSolution();
+            var solution = bestIndividual[1].GetSolution();
 
             stopWatch.Stop();
 
@@ -55,8 +55,8 @@ namespace MachilpebWPF
             ChargingStationBlock.Text = solution.Length.ToString();
             ChargingPointBlock.Text = point.ToString();
 
-            TotalCostsBlock.Text = bestIndividual.GetObjectiveFun().ToString();
-            CancalledBlock.Text = bestIndividual.GetCancelled().ToString();
+            TotalCostsBlock.Text = bestIndividual[1].GetObjectiveFun().ToString();
+            CancalledBlock.Text = bestIndividual[1].GetCancelled().ToString();
 
             var time = stopWatch.Elapsed;
             TimeBlock.Text = time.TotalSeconds.ToString();
