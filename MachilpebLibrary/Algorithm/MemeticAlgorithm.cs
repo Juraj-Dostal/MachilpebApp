@@ -81,7 +81,6 @@ namespace MachilpebLibrary.Algorithm
                 individual = this.LocalSearch(individual);
                 this._population.SetIndividual(individual);
             }
-
         }
 
         /*

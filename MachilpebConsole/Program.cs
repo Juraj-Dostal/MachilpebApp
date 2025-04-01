@@ -56,30 +56,33 @@ namespace MachilpebConsole
             var time = stopWatch.Elapsed;
 
             var solution = bestIndividual.GetSolution();
-
             var point = 0;
+
+            Console.WriteLine("SOLUTION");
+            //Console.WriteLine("Id Busstop | Name busstop | Point (pcs)");
+            Console.WriteLine("{0,-10} | {1,-20} | {2,5}", "Id Busstop", "Name busstop", "Point (pcs)");
 
             foreach (var item in solution)
             {
-                Console.WriteLine(item.Item1.Id + " " + item.Item1.Name + " " + item.Item2);
+                //Console.WriteLine(item.Item1.Id + " " + item.Item1.Name + " " + item.Item2);
+                Console.WriteLine("{0,-10} | {1,-20} | {2,5}", item.Item1.Id, item.Item1.Name, item.Item2);
                 point += item.Item2;
             }
 
-            Console.WriteLine("Pocet nabijacich stanic: " + solution.Length.ToString());
-            Console.WriteLine("Pocet nabijacich bodov: " + point.ToString());
-            Console.WriteLine("Cena nakladov: " + bestIndividual.GetObjectiveFun());
+            Console.WriteLine("Number of charging stations: " + solution.Length.ToString());
+            Console.WriteLine("Number of charging points: " + point.ToString());
+            Console.WriteLine("Cost price: " + bestIndividual.GetObjectiveFun());
 
             if (bestIndividual.IsCancelled())
             {
-                Console.WriteLine(bestIndividual.GetCancelled() + " turnusov nedokoncilo svoju jazdu");
+                Console.WriteLine("Number of uncompleted tours: " + bestIndividual.GetCancelled());
             }
             else
             {
-                Console.WriteLine("Vsetky turnusy dokoncili jazdu");
+                Console.WriteLine("All tours have completed the ride");
             }
 
             Console.WriteLine("Time: " + time.TotalSeconds + "s");
-
         }
     }
 }
