@@ -141,22 +141,11 @@
                         </Grid.ColumnDefinitions>
                         
                         <TextBlock Text="Termination criterion:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="TerminationCriterion" Text="15" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
+                        <TextBox Name="TerminationCriterion" Text="25" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
                         <TextBlock Text="" FontSize="18" Grid.Column="2"/>
                     </Grid>
-
+                    
                     <Grid Grid.Row="3" VerticalAlignment="Center" Margin="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Probability Mutation:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
-                        <TextBox Name="ProbabilityMutation" Text="0,05" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
-                        <TextBlock Text="" FontSize="18" Grid.Column="2"/>
-                    </Grid>
-
-                    <Grid Grid.Row="4" VerticalAlignment="Center" Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -166,7 +155,17 @@
                         <TextBox Name="ProbabilityLocalSearch" Text="0,35" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60"  Grid.Column="1"/>
                         <TextBlock Text="" FontSize="18" Grid.Column="2"/>
                     </Grid>
-
+                    
+                    <Grid Grid.Row="4" VerticalAlignment="Center" Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Probability Mutation:" HorizontalAlignment="Left" FontSize="18" Margin="25,0,0,0" />
+                        <TextBox Name="ProbabilityMutation" Text="0,1" HorizontalAlignment="Left" Margin="0,0,15,0" FontSize="18" MinWidth="60" Grid.Column="1"/>
+                        <TextBlock Text="" FontSize="18" Grid.Column="2"/>
+                    </Grid>
                 </Grid>
 
             </Grid>
