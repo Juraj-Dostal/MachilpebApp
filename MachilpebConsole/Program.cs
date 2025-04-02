@@ -60,12 +60,12 @@ namespace MachilpebConsole
 
             Console.WriteLine("SOLUTION");
             //Console.WriteLine("Id Busstop | Name busstop | Point (pcs)");
-            Console.WriteLine("{0,-10} | {1,-20} | {2,5}", "Id Busstop", "Name busstop", "Point (pcs)");
+            Console.WriteLine("{0,-10} | {1,-30} | {2,5}", "Id Busstop", "Name busstop", "Point (pcs)");
 
             foreach (var item in solution)
             {
                 //Console.WriteLine(item.Item1.Id + " " + item.Item1.Name + " " + item.Item2);
-                Console.WriteLine("{0,-10} | {1,-20} | {2,5}", item.Item1.Id, item.Item1.Name, item.Item2);
+                Console.WriteLine("{0,-10} | {1,-30} | {2,5}", item.Item1.Id, item.Item1.Name, item.Item2);
                 point += item.Item2;
             }
 

@@ -50,7 +50,6 @@ namespace MachilpebWPF
 
         private void SolutionWindow_Closing(object sender, CancelEventArgs e)
         {
-            this.Close();
         }
     }
 }
