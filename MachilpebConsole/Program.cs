@@ -57,8 +57,8 @@ namespace MachilpebConsole
             stopWatch.Stop();
             var time = stopWatch.Elapsed;
 
-            Console.Write(bestIndividual[0].GetObjectiveFun() + ";" + bestIndividual[0].GetCancelled());
-            Console.Write(bestIndividual[1].GetObjectiveFun() + ";" + bestIndividual[1].GetCancelled() + ";" + time.TotalSeconds );
+            Console.WriteLine(bestIndividual[0].GetObjectiveFun() + ";" + bestIndividual[0].GetCancelled());
+            Console.WriteLine(bestIndividual[1].GetObjectiveFun() + ";" + bestIndividual[1].GetCancelled() + ";" + time.TotalSeconds );
         }
 
 
