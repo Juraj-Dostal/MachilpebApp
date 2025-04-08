@@ -78,10 +78,7 @@ namespace MachilpebLibrary.Algorithm
             for (int i = 0; i < Population.POPULATION_SIZE; i++)
             {
                 var individual = new Individual();
-                if (this._rnd.NextDouble() < 0.1)
-                {
-                    individual = this.LocalSearch(individual);
-                }
+                individual = this.LocalSearch(individual);
                 this._population.SetIndividual(individual);
             }
         }
@@ -274,7 +271,6 @@ namespace MachilpebLibrary.Algorithm
                 if (actualIndividual.GetFitnessFun() > newIndividual.GetFitnessFun())
                 {
                     actualIndividual = newIndividual;
-                    i = -1;
                 }
             }
 

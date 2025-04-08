@@ -21,10 +21,10 @@ namespace MachilpebConsole
         /// <param name="priceChargingStation">Cost of building one charging station (Euro)</param>
         /// <param name="priceChargingPoint">Cost of building one charging station (Euro)</param>
 
-        static void Main(int populationSize,
-            int terminationCriterion,
-            double probabilityLocalSearch,
-            double probabilityMutation,
+        static void Main(int populationSize = 50,
+            int terminationCriterion = 25,
+            double probabilityLocalSearch = 0.35,
+            double probabilityMutation = 0.15,
             double batteryCharging = 1.33, 
             double batteryConsumption = 0.8, 
             double batteryCapacity = 140,
