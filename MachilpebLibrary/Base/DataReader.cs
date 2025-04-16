@@ -29,9 +29,6 @@ namespace MachilpebLibrary.Base
             _lineSchedulesList = [];
             _segmentsList = [];
 
-            Bus.BATTERY_CAPACITY = 140;
-            Bus.BATTERY_CONSUMPTION = 0.8;
-            Bus.BATTERY_CHARGING = 1;
 
             ReadData(route);
 
