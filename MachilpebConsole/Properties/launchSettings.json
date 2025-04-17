@@ -2,7 +2,7 @@
   "profiles": {
     "MachilpebConsole": {
       "commandName": "Project",
-      "commandLineArgs": "--population-size=50 --termination-criterion=50 --probability-local-search=0,5 --battery-consumption=1 --battery-capacity=112"
+      "commandLineArgs": "--battery-consumption=1 --battery-capacity=112"
     }
   }
 }
