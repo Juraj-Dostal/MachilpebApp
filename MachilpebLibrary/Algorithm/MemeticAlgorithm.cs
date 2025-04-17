@@ -78,7 +78,7 @@ namespace MachilpebLibrary.Algorithm
             for (int i = 0; i < Population.POPULATION_SIZE; i++)
             {
                 var individual = new Individual();
-                individual = this.LocalSearch(individual);
+                //individual = this.LocalSearch(individual);
                 this._population.SetIndividual(individual);
             }
         }
@@ -111,10 +111,10 @@ namespace MachilpebLibrary.Algorithm
                 {
                     child = this.Mutation(child);
                 }
-                if (this._rnd.NextDouble() < PROBABILITY_LOCAL_SEARCH)
-                {
-                    child = this.LocalSearch(child);
-                }
+                //if (this._rnd.NextDouble() < PROBABILITY_LOCAL_SEARCH)
+                //{
+                //    child = this.LocalSearch(child);
+                //}
 
                 newPop.SetIndividual(child);
             }
